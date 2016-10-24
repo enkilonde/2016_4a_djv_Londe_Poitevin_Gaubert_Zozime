@@ -76,6 +76,7 @@ public class MainScript : MonoBehaviour
 	
 	public struct GameState
 	{
+        public float posX;
 		public Vector2 IAPose;
 		public Vector2 playerPos;
 	}
