@@ -7,19 +7,19 @@ using UnityEngine.UI;
 
 public class MainScript : MonoBehaviour
 {
+    
+    public GameObject logoGO;
+    public GameObject menuGO;
+    public GameObject ingameGO;
+    public GameObject endgameGO;
+    public Transform ballTransform;
+    public Rigidbody ballRigidbody;
+    public Button playGameButton;
 
-	public GameObject logoGO;
-	public GameObject menuGO;
-	public GameObject ingameGO;
-	public GameObject endgameGO;
-	public Transform ballTransform;
-	public Rigidbody ballRigidbody;
-	public Button playGameButton;
+    public GameObject avatar;
 
-	public GameObject avatar;
-
-	void Start ()
-	{
+    void Start ()
+    {
 
 		var gameStateStream = Observable.Return("start")
 			.Concat(Observable.Return("logo"))
@@ -61,7 +61,7 @@ public class MainScript : MonoBehaviour
 
 		var gameStateUpdateLoop = ingameGameStream.SelectMany(_ => Observable.EveryFixedUpdate()).TakeUntil(endgameGameStream).Repeat();
 
-		gameStateUpdateLoop.Subscribe(_AppDomain => Debug.Log(UnityEngine.Random.Range(0, 2000)));
+		gameStateUpdateLoop.Subscribe(_ => Debug.Log(UnityEngine.Random.Range(0, 2000)));
 
 
 		var customeGameStateStream = gameStateUpdateLoop.Scan(new GameState(), (gameState, ticks) => GetNextState(gameState));
