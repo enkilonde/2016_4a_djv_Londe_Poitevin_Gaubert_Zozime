@@ -1,14 +1,13 @@
-﻿public enum VehicleAction
+﻿using System;
+
+[Flags]
+public enum VehicleAction
 {
-    ACCELERATE = 0,
-    ACCELERATE_RIGHT,
-    ACCELERATE_LEFT,
-    RIGHT,
-    LEFT,
-    NO_INPUT,
-    BRAKE,
-    BRAKE_RIGHT,
-    BRAKE_LEFT,
-    USE_ITEM,
+    NO_INPUT = 0,
+    ACCELERATE = 1,
+    LEFT = 2,
+    RIGHT = 4,
+    BRAKE = 16,
+    USE_ITEM = 32,
     Count
 }
