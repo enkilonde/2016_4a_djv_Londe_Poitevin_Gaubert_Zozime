@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
 
+public enum TileType { SRAIGHT, CURVED, CHECKPOINT, TEE, CROSS };
+
 public class Tile : MonoBehaviour
 {
+    //public GameObject boostPlate;
     public Transform transform;
-    public GameObject boostPlate;
-    public Waypoint waypoint;
+    public TileType tileType;
+    public int rotation;
 
+    
 
-    public bool hasWaypoint()
-    {
-        return waypoint != null;
-    }
-
+    /*
     public bool hasBoostPlate()
     {
         return boostPlate != null;
     }
+    */
 }
