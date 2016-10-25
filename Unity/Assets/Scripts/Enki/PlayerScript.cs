@@ -26,7 +26,7 @@ public class PlayerScript : Vehicle
         }
 
         gameUpdate.Where(_ => Input.GetAxisRaw("Horizontal") != 0).Subscribe(_ => rotateEntity(Input.GetAxisRaw("Horizontal")));
-        gameUpdate.Where(_ => Input.GetAxisRaw("Vertical") != 0).Subscribe(_ => goForward());
+        gameUpdate.Where(_ => Input.GetAxisRaw("Vertical") != 0).Subscribe(_ => goForward(Input.GetAxisRaw("Vertical")));
     }
 
 

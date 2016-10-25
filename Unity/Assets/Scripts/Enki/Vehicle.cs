@@ -26,11 +26,11 @@ public class Vehicle : MonoBehaviour {
         transform.Rotate(0, rotationSpeed * Time.deltaTime * value, 0);
     }
 
-    protected void goForward()
+    protected void goForward(float value)
     {
         float mult = 1;
         if (isEntityInGrass(transform.position)) mult = 0.5f;
-        transform.position += transform.forward * speed * Time.deltaTime * mult;
+        transform.position += transform.forward * speed * Time.deltaTime * mult * value;
     }
 
 
@@ -58,7 +58,7 @@ public class Vehicle : MonoBehaviour {
                 return GetStraightTileGrass(tile, relativePos);
 
             case "roadtile_curve":
-                GetCurvedGrass(tile, relativePos);
+                return GetCurvedGrass(tile, relativePos);
                 break;
 
             case "roadtile_straight":
@@ -90,23 +90,9 @@ public class Vehicle : MonoBehaviour {
 
     bool GetCurvedGrass(Transform tile, Vector2 relativpos)
     {
-        float rotationY = tile.rotation.eulerAngles.y;
-
-        if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
-        {
-            if (relativpos.y > 2.5f || relativpos.y < -2.5f) return true;
-        }
-        else
-        {
-            if (relativpos.x > 2.5f || relativpos.x < -2.5f) return true;
-        }
-
         Vector3 pivot = tile.GetChild(0).position;
-        pivot.y = transform.position.y;
-
-        float dist = Vector3.Distance(transform.position, pivot); //OPTIMISABLE!!!
-        
-
+        float dist = (transform.position.x - pivot.x) * (transform.position.x - pivot.x) + (transform.position.z - pivot.z) * (transform.position.z - pivot.z);
+        if (dist < 2.5f * 2.5f || dist > 7.5f * 7.5f) return true;
         return false;
     }
 
