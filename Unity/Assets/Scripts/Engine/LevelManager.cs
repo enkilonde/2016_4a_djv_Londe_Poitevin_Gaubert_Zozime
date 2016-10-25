@@ -29,8 +29,38 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public Transform[] checkpoints;
+    private int playerCheckpointCount = 1;
+    private int AICheckpointCount = 1;
 
-
-
-
+    public void PassCheckpoint(Transform checkpointTransform, bool isIA = false)
+    {
+        if (isIA)
+        {
+            if (checkpoints[AICheckpointCount] == checkpointTransform)
+            {
+                AICheckpointCount++;
+                if (AICheckpointCount >= checkpoints.Length)
+                {
+                    AICheckpointCount = 1;
+                    AILapsCount++;
+                    Debug.Log("AI lap " + AILapsCount);
+                }
+            }
+        }
+        else
+        {
+            if (checkpoints[playerCheckpointCount] == checkpointTransform)
+            {
+                Debug.Log("Player reach checkpoint " + playerCheckpointCount);
+                playerCheckpointCount++;
+                if (playerCheckpointCount >= checkpoints.Length)
+                {
+                    playerCheckpointCount = 1;
+                    playerLapsCount++;
+                    Debug.Log("Player lap " + playerLapsCount);
+                }
+            }
+        }
+    }
 }

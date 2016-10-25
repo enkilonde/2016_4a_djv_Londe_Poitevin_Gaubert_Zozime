@@ -61,6 +61,10 @@ public class GameStateManager : MonoBehaviour
         player.transform.position = _t.position;
         player.transform.rotation = _t.rotation;
 
+        if (isEntityOnCheckpoint(gameState.player.position))
+        {
+            levelManagerScript.PassCheckpoint(GetEntityTile(gameState.player.position));
+        }
     }
 
 
@@ -100,6 +104,23 @@ public class GameStateManager : MonoBehaviour
         return false;
     }
 
+    bool isEntityOnCheckpoint(Vector3 entityPos)
+    {
+        Transform tile = GetEntityTile(entityPos);
+
+        Vector2 relativePos = GetPosInTile(entityPos, tile.position);
+
+        switch (tile.name)
+        {
+            case "roadtile_checkpoint":
+                return GetCheckpointTileCheckpoint(tile, relativePos);
+
+            default:
+                break;
+        }
+        return false;
+    }
+
     Transform GetEntityTile(Vector3 entityPos)
     {
         //Debug.Log("Player pos : (" + (int)entityPos.x / 10 + ", " + (int)entityPos.z / 10 + ")");
@@ -109,6 +130,22 @@ public class GameStateManager : MonoBehaviour
     Vector2 GetPosInTile(Vector3 playerpos, Vector3 Tilepos)
     {
         return new Vector2(playerpos.x - Tilepos.x, playerpos.z - Tilepos.z);
+    }
+
+    bool GetCheckpointTileCheckpoint(Transform tile, Vector2 relativpos)
+    {
+        float rotationY = tile.rotation.eulerAngles.y;
+
+        if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
+        {
+            if (relativpos.x > -0.5f && relativpos.x < 0.5f) return true;
+        }
+        else
+        {
+            if (relativpos.y > -0.5f && relativpos.y < 0.5f) return true;
+        }
+
+        return false;
     }
 
     bool GetCheckpointTileGrass(Transform tile, Vector2 relativpos)
@@ -131,7 +168,6 @@ public class GameStateManager : MonoBehaviour
     {
         Vector3 pivot = tile.GetChild(0).position;
         float dist = (playerpos.x - pivot.x) * (playerpos.x - pivot.x) + (playerpos.z - pivot.z) * (playerpos.z - pivot.z);
-        print(dist);
         if (dist < 2.5f * 2.5f || dist > 7.5f * 7.5f) return true;
         return false;
     }
