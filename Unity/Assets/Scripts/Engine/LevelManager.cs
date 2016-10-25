@@ -5,12 +5,7 @@ public class LevelManager : MonoBehaviour
     /**
         Structure de la piste
     **/
-    private Tile[] trackTiles;
-    private int trackWidth;
-    private int trackHeight;
     public GameObject[,] tiles = new GameObject[500, 500];
-
-    public VehicleProperties player;
 
 
     /**
@@ -22,11 +17,6 @@ public class LevelManager : MonoBehaviour
     private int AILapsCount;
 
     private int maxBananasCount;
-
-    public Tile getTiles(int x, int y)
-    {
-        return trackTiles[y * trackWidth + x];
-    }
 
     void Awake()
     {

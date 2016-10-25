@@ -22,13 +22,16 @@ public struct VehicleProperties
 
 
 
-    public CustomTransform UpdateVehicle(VehicleAction action, float roadFactor)
+    public CustomTransform UpdateVehicle(VehicleAction action, bool isInGrass)
     {
         float orientationIncrement = 0.0f;
         float speedIncrement = 0.0f;
+        float GrassMult = 1;
+        if (isInGrass) GrassMult = 0.2f;
+        
 
         if ((action & VehicleAction.ACCELERATE) == VehicleAction.ACCELERATE) {
-            speedIncrement = maxSpeed * deltaTime;
+            speedIncrement = maxSpeed * deltaTime * GrassMult;
         }
 
         if ((action & VehicleAction.LEFT) == VehicleAction.LEFT)
