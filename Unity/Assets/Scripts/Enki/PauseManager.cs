@@ -23,7 +23,7 @@ public class PauseManager : MonoBehaviour
 
 	}
 
-    void TriggerPause()
+    public void TriggerPause()
     {
         pauseCanvas.enabled = !pauseCanvas.enabled;
         paused = pauseCanvas.enabled;
