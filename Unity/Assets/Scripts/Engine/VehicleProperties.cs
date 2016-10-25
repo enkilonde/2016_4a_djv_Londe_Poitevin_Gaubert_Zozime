@@ -17,22 +17,18 @@ public struct VehicleProperties
     public Vector3 position;
     public float orientation;
     public VehicleAction action;
-    public float acceleration;
     public int nextWaypointIndex;
 
 
 
-    public float currentSpeed;
-    public float dragFactor;
 
     public CustomTransform UpdateVehicle(VehicleAction action, float roadFactor)
     {
-        float positionIncrement = 0.0f;
         float orientationIncrement = 0.0f;
         float speedIncrement = 0.0f;
 
         if ((action & VehicleAction.ACCELERATE) == VehicleAction.ACCELERATE) {
-            speedIncrement = acceleration * deltaTime;
+            speedIncrement = maxSpeed * deltaTime;
         }
 
         if ((action & VehicleAction.LEFT) == VehicleAction.LEFT)
@@ -50,7 +46,6 @@ public struct VehicleProperties
             // TODO : implementer freinage
         }
 
-        currentSpeed = Mathf.Clamp(currentSpeed + speedIncrement, 0.0f, maxSpeed);
         orientation = orientation + orientationIncrement;
 
         CustomTransform output;

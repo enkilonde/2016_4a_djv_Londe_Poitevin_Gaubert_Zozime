@@ -14,7 +14,7 @@ public class GameStateManager : MonoBehaviour
     {
 
         //gameState.player.transform = 
-
+        InitGameState();
 
     }
 
@@ -24,6 +24,13 @@ public class GameStateManager : MonoBehaviour
         gameState.player.maxSpeed = maxSpeed;
 
         UpdateGameState();
+    }
+
+
+    void Update()
+    {
+        UpdateGameState();
+        ApplyNextState();
     }
 
     void UpdateGameState()
@@ -36,6 +43,21 @@ public class GameStateManager : MonoBehaviour
 
     void ApplyNextState()
     {
+
+        VehicleAction inputsSum = VehicleAction.NO_INPUT;
+
+        if(Input.GetAxisRaw("Horizontal") < 0)
+        inputsSum = inputsSum | VehicleAction.RIGHT;
+
+        if (Input.GetAxisRaw("Horizontal") > 0)
+            inputsSum = inputsSum | VehicleAction.LEFT;
+
+        if (Input.GetAxisRaw("Vertical") > 0)
+            inputsSum = inputsSum | VehicleAction.ACCELERATE;
+
+        CustomTransform _t = gameState.player.UpdateVehicle(inputsSum, 1);
+        player.transform.position = _t.position;
+        player.transform.rotation = _t.rotation;
 
     }
 
