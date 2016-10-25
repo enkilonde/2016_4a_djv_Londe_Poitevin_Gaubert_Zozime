@@ -9,15 +9,12 @@ public class Vehicle : MonoBehaviour {
 
     LevelDisposition levelDispoScript;
 
+    float CurrentCheckpoint = 0;
+
     // Use this for initialization
     void Awake ()
     {
         levelDispoScript = FindObjectOfType<LevelDisposition>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 
 
@@ -32,7 +29,6 @@ public class Vehicle : MonoBehaviour {
         if (isEntityInGrass(transform.position)) mult = 0.5f;
         transform.position += transform.forward * speed * Time.deltaTime * mult * value;
     }
-
 
     Transform GetEntityTile(Vector3 entityPos)
     {
@@ -55,11 +51,10 @@ public class Vehicle : MonoBehaviour {
         switch (tile.name)
         {
             case "roadtile_checkpoint":
-                return GetStraightTileGrass(tile, relativePos);
+                return GetCheckpointTileGrass(tile, relativePos);
 
             case "roadtile_curve":
                 return GetCurvedGrass(tile, relativePos);
-                break;
 
             case "roadtile_straight":
                 return GetStraightTileGrass(tile, relativePos);
@@ -88,6 +83,23 @@ public class Vehicle : MonoBehaviour {
         return false;
     }
 
+    bool GetCheckpointTileGrass(Transform tile, Vector2 relativpos)
+    {
+        float rotationY = tile.rotation.eulerAngles.y;
+
+        if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
+        {
+            if (relativpos.y > 2.5f || relativpos.y < -2.5f) return true;
+        }
+        else
+        {
+            if (relativpos.x > 2.5f || relativpos.x < -2.5f) return true;
+        }
+
+        return false;
+    }
+
+
     bool GetCurvedGrass(Transform tile, Vector2 relativpos)
     {
         Vector3 pivot = tile.GetChild(0).position;
@@ -96,7 +108,10 @@ public class Vehicle : MonoBehaviour {
         return false;
     }
 
-
+    public void IsInCheckpoint()
+    {
+         
+    }
 
 
 }

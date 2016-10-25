@@ -6,9 +6,13 @@ public enum TileType { SRAIGHT, CURVED, CHECKPOINT};
 public class LevelDisposition : MonoBehaviour
 {
 
-    public Transform player;
-
     public GameObject[,] tiles = new GameObject[500, 500];
+    public Transform[] checkpoints;
+
+    public float CurrentPlayerCeckpoint = 0;
+
+    public float CurrentIACheckpoint = 0;
+
 
 	// Use this for initialization
 	void Awake ()
