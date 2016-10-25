@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public struct Vehicle
+public struct VehicleProperties
 {
     private float deltaTime
     {
