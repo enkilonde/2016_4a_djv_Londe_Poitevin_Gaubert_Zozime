@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
@@ -12,11 +13,25 @@ public class LevelManager : MonoBehaviour
         Nombre de tours effectués par les joueurs
         et nombre de tours total
     **/
-    private int trackLapsCount;
-    private int playerLapsCount;
-    private int AILapsCount;
+    public int trackLapsCount = 3;
+
+    public Transform[] checkpoints; /**
+                                     * Don't count START checkpoint
+                                     * End with FINISH checkpoint
+                                     */
+    private int playerCheckpointCount = 0;
+    private int AICheckpointCount = 0;
+
+    private int playerLapsCount { get { return (playerCheckpointCount / checkpoints.Length) + 1; } }
+//    private int AILapsCount { get { return (AICheckpointCount / checkpoints.Length) + 1; } }
 
     private int maxBananasCount;
+
+    public Transform RankingCanvas;
+    public Text LapsUICounter;
+    public Text CheckpointsUICounter;
+
+    public PauseManager pauseManager;
 
     void Awake()
     {
@@ -27,40 +42,55 @@ public class LevelManager : MonoBehaviour
             tiles[(int)tilesTemp[i].transform.position.x / 10, (int)tilesTemp[i].transform.position.z / 10] = tilesTemp[i];
             Debug.Log("Tile (" + (int)tilesTemp[i].transform.position.x / 10 + ", " + (int)tilesTemp[i].transform.position.z / 10 + ") registered");
         }
+
+        // Initialize UI
+        LapsUICounter.text = "Laps : " + playerLapsCount + " / " + trackLapsCount;
+        CheckpointsUICounter.text = "Checkpoints : " + playerCheckpointCount % checkpoints.Length + " / " + (checkpoints.Length - 1);
     }
 
-    public Transform[] checkpoints;
-    private int playerCheckpointCount = 1;
-    private int AICheckpointCount = 1;
 
     public void PassCheckpoint(Transform checkpointTransform, bool isIA = false)
     {
         if (isIA)
         {
-            if (checkpoints[AICheckpointCount] == checkpointTransform)
+            if (checkpoints[AICheckpointCount % checkpoints.Length] == checkpointTransform)
             {
                 AICheckpointCount++;
-                if (AICheckpointCount >= checkpoints.Length)
+                ActualiseRanking();
+
+                if (AICheckpointCount >= trackLapsCount * checkpoints.Length)
                 {
-                    AICheckpointCount = 1;
-                    AILapsCount++;
-                    Debug.Log("AI lap " + AILapsCount);
+                    pauseManager.EndTrack(false);
                 }
             }
         }
         else
         {
-            if (checkpoints[playerCheckpointCount] == checkpointTransform)
+            if (checkpoints[playerCheckpointCount % checkpoints.Length] == checkpointTransform)
             {
-                Debug.Log("Player reach checkpoint " + playerCheckpointCount);
                 playerCheckpointCount++;
-                if (playerCheckpointCount >= checkpoints.Length)
+                LapsUICounter.text = "Laps : " + playerLapsCount + " / " + trackLapsCount;
+                CheckpointsUICounter.text = "Checkpoints : " + playerCheckpointCount % checkpoints.Length + " / " + (checkpoints.Length - 1);
+                ActualiseRanking();
+                if (playerCheckpointCount >= trackLapsCount * checkpoints.Length)
                 {
-                    playerCheckpointCount = 1;
-                    playerLapsCount++;
-                    Debug.Log("Player lap " + playerLapsCount);
+                    pauseManager.EndTrack(true);
                 }
             }
+        }
+    }
+
+    private void ActualiseRanking()
+    {
+        if (playerCheckpointCount > AICheckpointCount)
+        {
+            RankingCanvas.GetChild(0).gameObject.SetActive(true);
+            RankingCanvas.GetChild(1).gameObject.SetActive(false);
+        }
+        else if (playerLapsCount < AICheckpointCount)
+        {
+            RankingCanvas.GetChild(0).gameObject.SetActive(false);
+            RankingCanvas.GetChild(1).gameObject.SetActive(true);
         }
     }
 }
