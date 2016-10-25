@@ -103,7 +103,7 @@ public class AStar
     private static float getDistanceBetweenStates(GameState startState, GameState goalState)
     {
         return (goalState.elapsedTime - startState.elapsedTime) * (goalState.elapsedTime - startState.elapsedTime) +
-               (goalState.AI.transform.position - goalState.AI.transform.position).sqrMagnitude;
+               (goalState.AI.position - goalState.AI.position).sqrMagnitude;
     }
 
     private static Node PopPrioritaryNodeInList(List<Node> nodeLists)

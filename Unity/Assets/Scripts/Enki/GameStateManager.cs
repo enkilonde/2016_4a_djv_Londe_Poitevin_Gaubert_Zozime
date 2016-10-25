@@ -10,14 +10,14 @@ public class GameStateManager : MonoBehaviour
     void Awake()
     {
 
-
+        //gameState.player.transform = 
 
 
     }
 
     void CustomUptade()
     {
-
+        
 
 
     }
