@@ -29,11 +29,6 @@ public class PlayerScript : MonoBehaviour
 
         gameUpdate.Where(_ => Input.GetAxisRaw("Horizontal") != 0).Subscribe(_ => transform.Rotate(0, rotationSpeed * Time.deltaTime * Input.GetAxisRaw("Horizontal"), 0));
         gameUpdate.Where(_ => Input.GetAxisRaw("Vertical") != 0).Subscribe(_ => goForward());
-
-
-
-
-
     }
 
     void goForward()
