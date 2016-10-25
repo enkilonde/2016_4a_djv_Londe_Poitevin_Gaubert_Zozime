@@ -18,6 +18,8 @@ public class MainScript : MonoBehaviour
 
     public GameObject avatar;
 
+    bool IsPaused;
+
     void Start ()
     {
 
@@ -58,13 +60,17 @@ public class MainScript : MonoBehaviour
 		ingameGameStream.Subscribe(_ => ballTransform.position = new Vector3(0, 0, 0));
 		ingameGameStream.Subscribe(_ => ballRigidbody.velocity = new Vector3(0, 0, 0));
 
+        var pauseStatusStream = Observable.EveryUpdate().Where(_ => Input.GetKeyDown(KeyCode.P))
+           .Scan(false, (pauseStatus, _) => !pauseStatus);
 
-		var gameStateUpdateLoop = ingameGameStream.SelectMany(_ => Observable.EveryFixedUpdate()).TakeUntil(endgameGameStream).Repeat();
+        var gameStateUpdateLoop = ingameGameStream.SelectMany(_ => Observable.EveryFixedUpdate()).TakeUntil(endgameGameStream).Repeat();
 
 		gameStateUpdateLoop.Subscribe(_ => Debug.Log(UnityEngine.Random.Range(0, 2000)));
 
 
-		var customeGameStateStream = gameStateUpdateLoop.Scan(new GameState(), (gameState, ticks) => GetNextState(gameState));
+		var customeGameStateStream = gameStateUpdateLoop
+            .Where(_ => !IsPaused)
+            .Scan(new GameState(), (gameState, ticks) => GetNextState(gameState));
 
 		//gameStateStream.Subscribe(Debug.Log);
 

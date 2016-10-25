@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum TileType { SRAIGHT, CURVED, CHECKPOINT};
+
 public class LevelDisposition : MonoBehaviour
 {
+
+    public Transform player;
 
     public GameObject[,] tiles = new GameObject[500, 500];
 
@@ -12,22 +16,15 @@ public class LevelDisposition : MonoBehaviour
 
         GameObject[] tilesTemp = GameObject.FindGameObjectsWithTag("Tiles");
 
+
         for (int i = 0; i < tilesTemp.Length; i++)
         {
-            tiles[(int)tilesTemp[i].transform.position.x, (int)tilesTemp[i].transform.position.y] = tilesTemp[i];
-            Debug.Log("Tile (" + (int)tilesTemp[i].transform.position.x + ", " + (int)tilesTemp[i].transform.position.z + ") registered");
+            tiles[(int)tilesTemp[i].transform.position.x / 10, (int)tilesTemp[i].transform.position.z / 10] = tilesTemp[i];
+            Debug.Log("Tile (" + (int)tilesTemp[i].transform.position.x / 10 + ", " + (int)tilesTemp[i].transform.position.z / 10 + ") registered");
         }
 
 
 	}
 	
-	void Update ()
-    {
 
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-
-        }
-
-	}
 }

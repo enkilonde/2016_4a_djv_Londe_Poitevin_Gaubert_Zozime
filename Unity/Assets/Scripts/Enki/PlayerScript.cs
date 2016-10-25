@@ -6,12 +6,10 @@ using System;
 using UnityEngine.UI;
 
 
-public class PlayerScript : MonoBehaviour
+public class PlayerScript : Vehicle
 {
 
-    public float rotationSpeed = 5;
-    public float speed = 10;
-    public float grassMultiplier = 0.5f;
+
 
     Collider[] AllGrass;
 
@@ -27,17 +25,11 @@ public class PlayerScript : MonoBehaviour
             AllGrass[i] = allgrasstemp[i].GetComponent<Collider>();
         }
 
-        gameUpdate.Where(_ => Input.GetAxisRaw("Horizontal") != 0).Subscribe(_ => transform.Rotate(0, rotationSpeed * Time.deltaTime * Input.GetAxisRaw("Horizontal"), 0));
+        gameUpdate.Where(_ => Input.GetAxisRaw("Horizontal") != 0).Subscribe(_ => rotateEntity(Input.GetAxisRaw("Horizontal")));
         gameUpdate.Where(_ => Input.GetAxisRaw("Vertical") != 0).Subscribe(_ => goForward());
     }
 
-    void goForward()
-    {
-        float mult = 1;
-        if (IsInGrass()) mult = 0.5f;
-        transform.position += transform.forward * speed * Time.deltaTime * mult;
 
-    }
 
     bool IsInGrass()
     {
