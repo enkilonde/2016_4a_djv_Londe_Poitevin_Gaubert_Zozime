@@ -1,48 +1,78 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Vehicle : MonoBehaviour
+public class GameStateManager : MonoBehaviour
 {
-    public float rotationSpeed = 5;
-    public float speed = 10;
-    public float grassMultiplier = 0.5f;
 
+    public GameState gameState;
+    public Transform player;
 
-    public VehicleProperties properties = new VehicleProperties();
+    public float rotationSpeed = 90;
+    public float maxSpeed = 15;
 
-    LevelDisposition levelDispoScript;
+    LevelManager levelManagerScript;
 
-    float CurrentCheckpoint = 0;
-
-    // Use this for initialization
-    void Awake ()
+    void Awake()
     {
-        levelDispoScript = FindObjectOfType<LevelDisposition>();
-	}
+        levelManagerScript = FindObjectOfType<LevelManager>();
+        //gameState.player.transform = 
+        InitGameState();
 
-
-    protected void rotateEntity(float value)
-    {
-        transform.Rotate(0, rotationSpeed * Time.fixedDeltaTime * value, 0);
     }
 
-    protected void goForward(float value)
+    void InitGameState()
     {
-        float mult = 1;
-        if (isEntityInGrass(transform.position)) mult = 0.5f;
-        transform.position += transform.forward * speed * Time.fixedDeltaTime * mult * value;
+        gameState.player.rotationSpeed = rotationSpeed;
+        gameState.player.maxSpeed = maxSpeed;
+
+        UpdateGameState();
     }
 
-    Transform GetEntityTile(Vector3 entityPos)
+
+    void Update()
     {
-        //Debug.Log("Player pos : (" + (int)entityPos.x / 10 + ", " + (int)entityPos.z / 10 + ")");
-        return levelDispoScript.tiles[(int)entityPos.x / 10, (int)entityPos.z / 10].transform;
+        UpdateGameState();
+        ApplyNextState();
     }
 
-    Vector2 GetPosInTile(Vector3 pos, Vector3 Tilepos)
+    void UpdateGameState()
     {
-        return new Vector2(pos.x - Tilepos.x, pos.z - Tilepos.z);
+        gameState.player.position = player.position;
+        gameState.player.orientation = player.rotation.eulerAngles.y;
+
+
     }
+
+    void ApplyNextState()
+    {
+
+        VehicleAction inputsSum = VehicleAction.NO_INPUT;
+
+        if(Input.GetAxisRaw("Horizontal") < 0)
+        inputsSum = inputsSum | VehicleAction.RIGHT;
+
+        if (Input.GetAxisRaw("Horizontal") > 0)
+            inputsSum = inputsSum | VehicleAction.LEFT;
+
+        if (Input.GetAxisRaw("Vertical") > 0)
+            inputsSum = inputsSum | VehicleAction.ACCELERATE;
+
+        CustomTransform _t = gameState.player.UpdateVehicle(inputsSum, isEntityInGrass(gameState.player.position));
+        player.transform.position = _t.position;
+        player.transform.rotation = _t.rotation;
+
+    }
+
+
+
+    void ForSee()
+    {
+
+
+
+    }
+
+
 
     bool isEntityInGrass(Vector3 entityPos)
     {
@@ -70,20 +100,15 @@ public class Vehicle : MonoBehaviour
         return false;
     }
 
-    bool GetStraightTileGrass(Transform tile, Vector2 relativpos)
+    Transform GetEntityTile(Vector3 entityPos)
     {
-        float rotationY = tile.rotation.eulerAngles.y;
+        //Debug.Log("Player pos : (" + (int)entityPos.x / 10 + ", " + (int)entityPos.z / 10 + ")");
+        return levelManagerScript.tiles[(int)entityPos.x / 10, (int)entityPos.z / 10].transform;
+    }
 
-        if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
-        {
-            if (relativpos.y > 2.5f || relativpos.y < -2.5f) return true;
-        }
-        else
-        {
-            if (relativpos.x > 2.5f || relativpos.x < -2.5f) return true;
-        }
-
-        return false;
+    Vector2 GetPosInTile(Vector3 pos, Vector3 Tilepos)
+    {
+        return new Vector2(pos.x - Tilepos.x, pos.z - Tilepos.z);
     }
 
     bool GetCheckpointTileGrass(Transform tile, Vector2 relativpos)
@@ -102,7 +127,6 @@ public class Vehicle : MonoBehaviour
         return false;
     }
 
-
     bool GetCurvedGrass(Transform tile, Vector2 relativpos)
     {
         Vector3 pivot = tile.GetChild(0).position;
@@ -111,10 +135,19 @@ public class Vehicle : MonoBehaviour
         return false;
     }
 
-    public void IsInCheckpoint()
+    bool GetStraightTileGrass(Transform tile, Vector2 relativpos)
     {
-         
+        float rotationY = tile.rotation.eulerAngles.y;
+
+        if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
+        {
+            if (relativpos.y > 2.5f || relativpos.y < -2.5f) return true;
+        }
+        else
+        {
+            if (relativpos.x > 2.5f || relativpos.x < -2.5f) return true;
+        }
+
+        return false;
     }
-
-
 }

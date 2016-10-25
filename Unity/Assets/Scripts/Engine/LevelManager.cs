@@ -1,32 +1,36 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-
-public class LevelDisposition : MonoBehaviour
+public class LevelManager : MonoBehaviour
 {
-    
-
+    /**
+        Structure de la piste
+    **/
     public GameObject[,] tiles = new GameObject[500, 500];
-    public Transform[] checkpoints;
 
 
+    /**
+        Nombre de tours effectués par les joueurs
+        et nombre de tours total
+    **/
+    private int trackLapsCount;
+    private int playerLapsCount;
+    private int AILapsCount;
 
+    private int maxBananasCount;
 
-	// Use this for initialization
-	void Awake ()
+    void Awake()
     {
-
         GameObject[] tilesTemp = GameObject.FindGameObjectsWithTag("Tiles");
-
 
         for (int i = 0; i < tilesTemp.Length; i++)
         {
             tiles[(int)tilesTemp[i].transform.position.x / 10, (int)tilesTemp[i].transform.position.z / 10] = tilesTemp[i];
             Debug.Log("Tile (" + (int)tilesTemp[i].transform.position.x / 10 + ", " + (int)tilesTemp[i].transform.position.z / 10 + ") registered");
         }
+    }
 
 
-	}
-	
+
+
 
 }

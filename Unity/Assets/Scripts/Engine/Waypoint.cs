@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
 
-public class Waypoint : Tile
-{
-
+public class Waypoint : MonoBehaviour {
 }
