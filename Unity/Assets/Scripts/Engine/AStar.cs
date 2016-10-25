@@ -10,31 +10,29 @@ public class AStar
     public struct Node
     {
         public GameState gameState;
-        public GameState lastFrameState;
+        public int parentFrameStateIndex;
+        public int childrenStateIndex;
+        public float heuristicValue;
     }
 
     // TODO : définir un type de retour (probablement un tableau de node)
     public static void FindGameStateTransitions(Node start, Node goal, int maxIteration)
     {
-        List<Node> closedList = new List<Node>();
-        List<Node> openList = new List<Node>();
+        int iterations = 0;
+        List<Node> closedList = new List<Node>(maxIteration);
+        List<Node> openList = new List<Node>(maxIteration);
+        Node[] children = new Node[(int)VehicleAction.Count];
         float minDistance = float.MaxValue;
 
         openList.Add(start);
 
-        while (openList.Count > 0)
+        while (openList.Count > 0 && iterations >= maxIteration)
         {
-            Node currentNode = openList[openList.Count - 1];
+            Node currentNode = PopPrioritaryNodeInList(openList);
             float currentDistance = getDistanceBetweenStates(currentNode.gameState, goal.gameState);
-            openList.RemoveAt(openList.Count - 1);
 
-            if (currentDistance < minDistance)
-            {
-                // TODO : repenser cette partie qui ne correspond pas à notre cas
-                // TODO : retrouver le chemin des différents gamestate
-            }
-
-            Node[] children = generateChildren(currentNode);
+            // TODO : remplir la "grosse liste" plutôt
+            iterations = generateChildren(currentNode, children, iterations, maxIteration);
             for (int i = 0; i < children.Length; i++)
             {
                 GameState currentChildState = children[i].gameState;
@@ -61,11 +59,15 @@ public class AStar
         return default(Node);
     }
 
-    private static Node[] generateChildren(Node currentGameState)
+    private static int generateChildren(Node currentNode, Node[] childrenArray, int iterations, int maxIteration)
     {
-        // TODO : générer un enfant par combinaison d'input possible
-        // TODO : penser à affecter currentGameState dans generatedGameState[i].lastFrameState
-        return default(Node[]);
+        for (int i = 0; i < (int)VehicleAction.Count - 1; i++)
+        {
+            // Here we assume the player keep doing what he/she was doing on the last frame
+            // TODO : penser à affecter currentGameState dans generatedGameState[i].lastFrameState
+        }
+
+        return default(int);
     }
 
     /**
@@ -102,5 +104,23 @@ public class AStar
     {
         return (goalState.elapsedTime - startState.elapsedTime) * (goalState.elapsedTime - startState.elapsedTime) +
                (goalState.AI.transform.position - goalState.AI.transform.position).sqrMagnitude;
+    }
+
+    private static Node PopPrioritaryNodeInList(List<Node> nodeLists)
+    {
+        Node PrioritaryNode = nodeLists[0];
+        float minHeuristic = nodeLists[0].heuristicValue;
+        int indexOfPriorityNode = 0;
+        for (int i = 1; i < nodeLists.Count; i++)
+        {
+            if (nodeLists[i].heuristicValue < minHeuristic)
+            {
+                PrioritaryNode = nodeLists[i];
+                minHeuristic = nodeLists[i].heuristicValue;
+                indexOfPriorityNode = i;
+            }
+        }
+        nodeLists.RemoveAt(indexOfPriorityNode);
+        return PrioritaryNode;
     }
 }
