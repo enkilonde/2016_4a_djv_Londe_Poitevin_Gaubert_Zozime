@@ -87,7 +87,7 @@ public class GameStateManager : MonoBehaviour
                 return GetCheckpointTileGrass(tile, relativePos);
 
             case "roadtile_curve":
-                return GetCurvedGrass(tile, relativePos);
+                return GetCurvedGrass(tile, entityPos);
 
             case "roadtile_straight":
                 return GetStraightTileGrass(tile, relativePos);
@@ -106,9 +106,9 @@ public class GameStateManager : MonoBehaviour
         return levelManagerScript.tiles[(int)entityPos.x / 10, (int)entityPos.z / 10].transform;
     }
 
-    Vector2 GetPosInTile(Vector3 pos, Vector3 Tilepos)
+    Vector2 GetPosInTile(Vector3 playerpos, Vector3 Tilepos)
     {
-        return new Vector2(pos.x - Tilepos.x, pos.z - Tilepos.z);
+        return new Vector2(playerpos.x - Tilepos.x, playerpos.z - Tilepos.z);
     }
 
     bool GetCheckpointTileGrass(Transform tile, Vector2 relativpos)
@@ -127,10 +127,11 @@ public class GameStateManager : MonoBehaviour
         return false;
     }
 
-    bool GetCurvedGrass(Transform tile, Vector2 relativpos)
+    bool GetCurvedGrass(Transform tile, Vector3 playerpos)
     {
         Vector3 pivot = tile.GetChild(0).position;
-        float dist = (transform.position.x - pivot.x) * (transform.position.x - pivot.x) + (transform.position.z - pivot.z) * (transform.position.z - pivot.z);
+        float dist = (playerpos.x - pivot.x) * (playerpos.x - pivot.x) + (playerpos.z - pivot.z) * (playerpos.z - pivot.z);
+        print(dist);
         if (dist < 2.5f * 2.5f || dist > 7.5f * 7.5f) return true;
         return false;
     }
