@@ -8,6 +8,10 @@ public class LevelManager : MonoBehaviour
     private Tile[] trackTiles;
     private int trackWidth;
     private int trackHeight;
+    public GameObject[,] tiles = new GameObject[500, 500];
+
+    public VehicleProperties player;
+
 
     /**
         Nombre de tours effectués par les joueurs
@@ -23,6 +27,18 @@ public class LevelManager : MonoBehaviour
     {
         return trackTiles[y * trackWidth + x];
     }
+
+    void Awake()
+    {
+        GameObject[] tilesTemp = GameObject.FindGameObjectsWithTag("Tiles");
+
+        for (int i = 0; i < tilesTemp.Length; i++)
+        {
+            tiles[(int)tilesTemp[i].transform.position.x / 10, (int)tilesTemp[i].transform.position.z / 10] = tilesTemp[i];
+            Debug.Log("Tile (" + (int)tilesTemp[i].transform.position.x / 10 + ", " + (int)tilesTemp[i].transform.position.z / 10 + ") registered");
+        }
+    }
+
 
 
 

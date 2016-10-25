@@ -7,6 +7,9 @@ public class Vehicle : MonoBehaviour {
     public float speed = 10;
     public float grassMultiplier = 0.5f;
 
+
+    public VehicleProperties properties = new VehicleProperties();
+
     LevelDisposition levelDispoScript;
 
     float CurrentCheckpoint = 0;
@@ -20,14 +23,14 @@ public class Vehicle : MonoBehaviour {
 
     protected void rotateEntity(float value)
     {
-        transform.Rotate(0, rotationSpeed * Time.deltaTime * value, 0);
+        transform.Rotate(0, rotationSpeed * Time.fixedDeltaTime * value, 0);
     }
 
     protected void goForward(float value)
     {
         float mult = 1;
         if (isEntityInGrass(transform.position)) mult = 0.5f;
-        transform.position += transform.forward * speed * Time.deltaTime * mult * value;
+        transform.position += transform.forward * speed * Time.fixedDeltaTime * mult * value;
     }
 
     Transform GetEntityTile(Vector3 entityPos)
