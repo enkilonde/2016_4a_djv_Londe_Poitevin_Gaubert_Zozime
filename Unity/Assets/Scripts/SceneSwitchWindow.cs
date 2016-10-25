@@ -24,18 +24,18 @@ public class SceneSwitchWindow : UnityEditor.EditorWindow
         UnityEditor.Selection.transforms[0].position = new Vector3((int)posTemp.x / 10 * 10 + 5, 0, (int)posTemp.z / 10 * 10 + 5);
     }
 
-    [UnityEditor.MenuItem("Tools/Shortcuted/Snap Selected _F2")]
-    internal static void SelectParent()
-    {
+    //[UnityEditor.MenuItem("Tools/Shortcuted/Snap Selected _F2")]
+    //internal static void SelectParent()
+    //{
         
 
-        if (UnityEditor.Selection.transforms.Length == 0) return;
-        if (UnityEditor.Selection.transforms[0].parent == null) return;
-        if (UnityEditor.Selection.transforms[0].parent.tag != "Tiles") return;
-        UnityEngine.Object[] _o = new UnityEngine.Object[1];
-        _o[0] = UnityEditor.Selection.transforms[0].parent;
-        UnityEditor.Selection.objects = _o;
-    }
+    //    if (UnityEditor.Selection.transforms.Length == 0) return;
+    //    if (UnityEditor.Selection.transforms[0].parent == null) return;
+    //    if (UnityEditor.Selection.transforms[0].parent.tag != "Tiles") return;
+    //    UnityEngine.Object[] _o = new UnityEngine.Object[1];
+    //    _o[0] = UnityEditor.Selection.transforms[0].parent;
+    //    UnityEditor.Selection.objects = _o;
+    //}
 
 
     [UnityEditor.MenuItem("Tools/Shortcuted/Fix Names _F3")]

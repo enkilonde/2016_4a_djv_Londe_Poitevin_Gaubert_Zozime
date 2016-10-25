@@ -9,13 +9,19 @@ public class GameStateManager : MonoBehaviour
 
     public float rotationSpeed = 90;
     public float maxSpeed = 15;
+    public float accelerationTime = 2;
+    public float grassSlowFactor = 5;
+    public float grassMaxSpeed = 0.2f;
 
     LevelManager levelManagerScript;
+
+    PauseManager pauseManagerScript;
 
     void Awake()
     {
         levelManagerScript = FindObjectOfType<LevelManager>();
-        //gameState.player.transform = 
+        pauseManagerScript = FindObjectOfType<PauseManager>();
+
         InitGameState();
 
     }
@@ -24,6 +30,10 @@ public class GameStateManager : MonoBehaviour
     {
         gameState.player.rotationSpeed = rotationSpeed;
         gameState.player.maxSpeed = maxSpeed;
+        gameState.player.accelerationTime = accelerationTime;
+        gameState.player.grassSlowFactor = grassSlowFactor;
+        gameState.player.grassMaxSpeed = grassMaxSpeed;
+        gameState.player.grassDecelerate = 1;
 
         UpdateGameState();
     }
@@ -31,6 +41,8 @@ public class GameStateManager : MonoBehaviour
 
     void Update()
     {
+        if (pauseManagerScript.paused) return;
+
         UpdateGameState();
         ApplyNextState();
     }
@@ -56,6 +68,9 @@ public class GameStateManager : MonoBehaviour
 
         if (Input.GetAxisRaw("Vertical") > 0)
             inputsSum = inputsSum | VehicleAction.ACCELERATE;
+
+        if (Input.GetAxisRaw("Vertical") < 0)
+            inputsSum = inputsSum | VehicleAction.BRAKE;
 
         CustomTransform _t = gameState.player.UpdateVehicle(inputsSum, isEntityInGrass(gameState.player.position));
         player.transform.position = _t.position;

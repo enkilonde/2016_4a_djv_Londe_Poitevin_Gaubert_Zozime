@@ -10,7 +10,9 @@ public struct VehicleProperties
     //Valeurs à initialiser
     public float rotationSpeed;
     public float maxSpeed;
-
+    public float accelerationTime;
+    public float grassSlowFactor;
+    public float grassMaxSpeed;
 
 
     //Valeurs à updater
@@ -20,19 +22,42 @@ public struct VehicleProperties
     public int nextWaypointIndex;
 
 
+    //Variables internes
+    float speedAcceleration;
+    public float grassDecelerate;
+
 
 
     public CustomTransform UpdateVehicle(VehicleAction action, bool isInGrass)
     {
         float orientationIncrement = 0.0f;
         float speedIncrement = 0.0f;
-        float GrassMult = 1;
-        if (isInGrass) GrassMult = 0.2f;
-        
+
+        //if (isInGrass) grassDecelerate -= deltaTime * grassSlowFactor;
+        //else grassDecelerate += deltaTime * grassSlowFactor;
+
+        //grassDecelerate = Mathf.Clamp(grassDecelerate, grassMaxSpeed, 1);
+
+        if (isInGrass)
+        {
+            if(speedAcceleration > grassMaxSpeed)
+            speedAcceleration = Mathf.Clamp(speedAcceleration - deltaTime * grassSlowFactor, grassMaxSpeed, 1);
+        } 
 
         if ((action & VehicleAction.ACCELERATE) == VehicleAction.ACCELERATE) {
-            speedIncrement = maxSpeed * deltaTime * GrassMult;
+            speedAcceleration += deltaTime / accelerationTime;
         }
+        else
+        {
+            speedAcceleration -= deltaTime / accelerationTime;
+        }
+
+        if ((action & VehicleAction.BRAKE) == VehicleAction.BRAKE)
+        {
+            speedAcceleration -= deltaTime / accelerationTime;
+        }
+        speedAcceleration = Mathf.Clamp01(speedAcceleration);
+        speedIncrement = maxSpeed * deltaTime * speedAcceleration;
 
         if ((action & VehicleAction.LEFT) == VehicleAction.LEFT)
         {
@@ -44,10 +69,7 @@ public struct VehicleProperties
             orientationIncrement = -rotationSpeed * deltaTime;
         }
 
-        if ((action & VehicleAction.BRAKE) == VehicleAction.BRAKE)
-        {
-            // TODO : implementer freinage
-        }
+       
 
         orientation = orientation + orientationIncrement;
 
