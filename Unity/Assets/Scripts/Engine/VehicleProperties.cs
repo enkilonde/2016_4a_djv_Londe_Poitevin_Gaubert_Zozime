@@ -13,6 +13,7 @@ public struct VehicleProperties
     public float accelerationTime;
     public float grassSlowFactor;
     public float grassMaxSpeed;
+    public float brakePower;
 
 
     //Valeurs à updater
@@ -33,11 +34,6 @@ public struct VehicleProperties
         float orientationIncrement = 0.0f;
         float speedIncrement = 0.0f;
 
-        //if (isInGrass) grassDecelerate -= deltaTime * grassSlowFactor;
-        //else grassDecelerate += deltaTime * grassSlowFactor;
-
-        //grassDecelerate = Mathf.Clamp(grassDecelerate, grassMaxSpeed, 1);
-
         if (isInGrass)
         {
             if(speedAcceleration > grassMaxSpeed)
@@ -54,7 +50,7 @@ public struct VehicleProperties
 
         if ((action & VehicleAction.BRAKE) == VehicleAction.BRAKE)
         {
-            speedAcceleration -= deltaTime / accelerationTime;
+            speedAcceleration -= deltaTime / (accelerationTime / brakePower);
         }
         speedAcceleration = Mathf.Clamp01(speedAcceleration);
         speedIncrement = maxSpeed * deltaTime * speedAcceleration;
@@ -75,7 +71,7 @@ public struct VehicleProperties
 
         CustomTransform output;
         output.rotation = Quaternion.AngleAxis(orientation, Vector3.up);
-        output.position = position + speedIncrement * (output.rotation * Vector3.forward); //experimental
+        output.position = position + speedIncrement * (output.rotation * Vector3.forward);
         return output;
     }
 }

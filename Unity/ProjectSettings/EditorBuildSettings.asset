@@ -8,6 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Menu.unity
   - enabled: 1
-    path: Assets/Scenes/Scene 1.unity
-  - enabled: 1
     path: Assets/Scenes/CircuitDeLaSarthe.unity
+  - enabled: 1
+    path: Assets/Scenes/Scene 1.unity

@@ -3,19 +3,27 @@ using System.Collections;
 
 public class GameStateManager : MonoBehaviour
 {
-
+    //Public refs
     public GameState gameState;
     public Transform player;
 
+    //Private refs
+    LevelManager levelManagerScript;
+    PauseManager pauseManagerScript;
+
+    //internal
+    float playerCurrentSpeed = 0;
+
+    [Header("Vehicle Properties")]
     public float rotationSpeed = 90;
     public float maxSpeed = 15;
     public float accelerationTime = 2;
     public float grassSlowFactor = 5;
     public float grassMaxSpeed = 0.2f;
+    public float brakePower = 0.5f;
 
-    LevelManager levelManagerScript;
 
-    PauseManager pauseManagerScript;
+
 
     void Awake()
     {
@@ -34,6 +42,7 @@ public class GameStateManager : MonoBehaviour
         gameState.player.grassSlowFactor = grassSlowFactor;
         gameState.player.grassMaxSpeed = grassMaxSpeed;
         gameState.player.grassDecelerate = 1;
+        gameState.player.brakePower = brakePower;
 
         UpdateGameState();
     }
@@ -81,8 +90,6 @@ public class GameStateManager : MonoBehaviour
             levelManagerScript.PassCheckpoint(GetEntityTile(gameState.player.position));
         }
     }
-
-
 
     void ForSee()
     {

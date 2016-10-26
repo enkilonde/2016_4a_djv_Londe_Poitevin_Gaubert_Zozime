@@ -22,21 +22,26 @@ public class PauseManager : MonoBehaviour
 
         yield return new WaitForSeconds(delayBetweenNumbers);
 
+
         canvasReadyGo.GetChild(0).gameObject.SetActive(true); // 3
         yield return new WaitForSeconds(delayBetweenNumbers);
+
 
         canvasReadyGo.GetChild(0).gameObject.SetActive(false);
         canvasReadyGo.GetChild(1).gameObject.SetActive(true); // 2
         yield return new WaitForSeconds(delayBetweenNumbers);
 
+
         canvasReadyGo.GetChild(1).gameObject.SetActive(false);
         canvasReadyGo.GetChild(2).gameObject.SetActive(true); // 1
         yield return new WaitForSeconds(delayBetweenNumbers);
 
-        paused = false;
+        if(canvasReadyGo.gameObject.activeSelf) paused = false;
+
         canvasReadyGo.GetChild(2).gameObject.SetActive(false);
         canvasReadyGo.GetChild(3).gameObject.SetActive(true); // GO
         yield return new WaitForSeconds(delayBetweenNumbers);
+
 
         canvasReadyGo.GetChild(3).gameObject.SetActive(false);
         canvasReadyGo.gameObject.SetActive(false);
@@ -44,6 +49,15 @@ public class PauseManager : MonoBehaviour
 
     void Update ()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StopCoroutine(ReadyGo(delayBetweenNumbers));
+            paused = false;
+            canvasReadyGo.GetChild(2).gameObject.SetActive(false);
+            canvasReadyGo.GetChild(3).gameObject.SetActive(false);
+            canvasReadyGo.gameObject.SetActive(false);
+        }
+
 
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
         {
