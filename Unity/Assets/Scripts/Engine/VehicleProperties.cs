@@ -27,12 +27,12 @@ public struct VehicleProperties
     public float speedAcceleration;
 
 
-    public CustomTransform UpdateVehicle(VehicleAction action, bool isInGrass)
+    public CustomTransform UpdateVehicle(VehicleAction action, GroundType groundType)
     {
         float orientationIncrement = 0.0f;
         float speedIncrement = 0.0f;
 
-        if (isInGrass)
+        if (groundType == GroundType.Grass)
         {
             if(speedAcceleration > grassMaxSpeed)
             speedAcceleration = Mathf.Clamp(speedAcceleration - deltaTime * grassSlowFactor, grassMaxSpeed, 1);

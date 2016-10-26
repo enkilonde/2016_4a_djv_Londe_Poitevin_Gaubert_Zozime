@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum GroundType { Road, Grass, Wall}
+
 public class GameStateManager : MonoBehaviour
 {
     //Public refs
@@ -88,6 +90,9 @@ public class GameStateManager : MonoBehaviour
             inputsSum = inputsSum | VehicleAction.BRAKE;
 
         CustomTransform _t = gameState.player.UpdateVehicle(inputsSum, isEntityInGrass(gameState.player.position));
+
+
+
         player.transform.position = _t.position;
         player.transform.rotation = _t.rotation;
 
@@ -106,7 +111,7 @@ public class GameStateManager : MonoBehaviour
 
 
 
-    bool isEntityInGrass(Vector3 entityPos)
+    GroundType isEntityInGrass(Vector3 entityPos)
     {
 
         Transform tile = GetEntityTile(entityPos);
@@ -125,11 +130,8 @@ public class GameStateManager : MonoBehaviour
                 return GetStraightTileGrass(tile, relativePos);
 
             default:
-                break;
+                return GroundType.Road;
         }
-
-
-        return false;
     }
 
     bool isEntityOnCheckpoint(Vector3 entityPos)
@@ -176,43 +178,65 @@ public class GameStateManager : MonoBehaviour
         return false;
     }
 
-    bool GetCheckpointTileGrass(Transform tile, Vector2 relativpos)
+    GroundType GetCheckpointTileGrass(Transform tile, Vector2 relativpos)
     {
         float rotationY = tile.rotation.eulerAngles.y;
 
         if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
         {
-            if (relativpos.y > 2.5f || relativpos.y < -2.5f) return true;
+            if (relativpos.y > 4.5f || relativpos.y < -4.5f) return GroundType.Wall;
         }
         else
         {
-            if (relativpos.x > 2.5f || relativpos.x < -2.5f) return true;
+            if (relativpos.x > 4.5f || relativpos.x < -4.5f) return GroundType.Wall;
         }
 
-        return false;
+        if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
+        {
+            if (relativpos.y > 2.5f || relativpos.y < -2.5f) return GroundType.Grass;
+        }
+        else
+        {
+            if (relativpos.x > 2.5f || relativpos.x < -2.5f) return GroundType.Grass;
+        }
+
+        return GroundType.Road;
     }
 
-    bool GetCurvedGrass(Transform tile, Vector3 playerpos)
+    GroundType GetCurvedGrass(Transform tile, Vector3 playerpos)
     {
         Vector3 pivot = tile.GetChild(0).position;
         float dist = (playerpos.x - pivot.x) * (playerpos.x - pivot.x) + (playerpos.z - pivot.z) * (playerpos.z - pivot.z);
-        if (dist < 2.5f * 2.5f || dist > 7.5f * 7.5f) return true;
-        return false;
+
+        if (dist < 0.5f * 0.5f || dist > 9.5f * 9.5f) return GroundType.Wall;
+
+
+        if (dist < 2.5f * 2.5f || dist > 7.5f * 7.5f) return GroundType.Grass;
+        return GroundType.Road;
     }
 
-    bool GetStraightTileGrass(Transform tile, Vector2 relativpos)
+    GroundType GetStraightTileGrass(Transform tile, Vector2 relativpos)
     {
         float rotationY = tile.rotation.eulerAngles.y;
 
         if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
         {
-            if (relativpos.y > 2.5f || relativpos.y < -2.5f) return true;
+            if (relativpos.y > 4.5f || relativpos.y < -4.5f) return GroundType.Wall;
         }
         else
         {
-            if (relativpos.x > 2.5f || relativpos.x < -2.5f) return true;
+            if (relativpos.x > 4.5f || relativpos.x < -4.5f) return GroundType.Wall;
         }
 
-        return false;
+        if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
+        {
+            if (relativpos.y > 2.5f || relativpos.y < -2.5f) return GroundType.Grass;
+        }
+        else
+        {
+            if (relativpos.x > 2.5f || relativpos.x < -2.5f) return GroundType.Grass;
+        }
+
+        return GroundType.Road;
     }
 }
