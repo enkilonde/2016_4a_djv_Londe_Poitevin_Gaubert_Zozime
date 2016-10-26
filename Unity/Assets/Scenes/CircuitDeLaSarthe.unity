@@ -749,11 +749,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1000013167450998, guid: 6c9f8fd257e9eb6449f9e5c48816a326, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1000010020577278, guid: 6c9f8fd257e9eb6449f9e5c48816a326, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6c9f8fd257e9eb6449f9e5c48816a326, type: 2}
@@ -1950,7 +1950,7 @@ MonoBehaviour:
   sphereDebugPrefab: {fileID: 1000012967839080, guid: a6a9f57803bd25f458c4bd944b80efec,
     type: 2}
   gameStateManager: {fileID: 1951380308}
-  maxIterations: 50
+  maxIterations: 10
 --- !u!114 &1951380308 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114000010692905458, guid: 583dd7b417e1a0e409adb874b69b2759,

@@ -131,6 +131,9 @@ public class ForecastEngine : MonoBehaviour
 
     private float GetHeuristicValue(ref GameState start, ref GameState goal)
     {
+        // Faire un truc avec l'orientation
+        float orientationFactor = Vector3.Dot(start.AI.orientation)
+
         return Vector3.SqrMagnitude((goal.AI.position - start.AI.position) / (start.AI.maxSpeed * start.AI.maxSpeed));
     }
 
