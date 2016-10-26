@@ -16,7 +16,7 @@ public class CollisionScript
             {
                 if (n_Pos != Vector3.zero)
                 {
-                    result = new Vector3((n_Pos.x + prevColl.x) * 0.5f, (n_Pos.y + prevColl.y) * 0.5f, (n_Pos.z + prevColl.z) * 0.5f);
+                    result = new Vector3((n_Pos.x + prevColl.x) * 0.5f, PlayerPos.y, (n_Pos.z + prevColl.z) * 0.5f);
                 }
 
             }
@@ -72,22 +72,22 @@ public class CollisionScript
             {
                 if (posFromWall.z > 0)
                 {
-                    posFromWall = new Vector3(posFromWall.x, 0, radius / wall.localScale.z);
+                    posFromWall = new Vector3(posFromWall.x, posFromWall.y, radius / wall.localScale.z);
                 }
                 else
                 {
-                    posFromWall = new Vector3(posFromWall.x, 0, -radius / wall.localScale.z);
+                    posFromWall = new Vector3(posFromWall.x, posFromWall.y, -radius / wall.localScale.z);
                 }
             }
             else
             {
                 if (posFromWall.x > 0)
                 {
-                    posFromWall = new Vector3(radius / wall.localScale.x, 0, posFromWall.z);
+                    posFromWall = new Vector3(radius / wall.localScale.x, posFromWall.y, posFromWall.z);
                 }
                 else
                 {
-                    posFromWall = new Vector3(-radius / wall.localScale.x, 0, posFromWall.z);
+                    posFromWall = new Vector3(-radius / wall.localScale.x, posFromWall.y, posFromWall.z);
                 }
             }
 

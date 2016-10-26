@@ -110,8 +110,9 @@ public class GameStateManager : MonoBehaviour
 
     void ApplyPhysics()
     {
-        Vector3 collResult = CollisionScript.CollisionManage(allWalls, player.position, 0.5f, player.forward * playerCurrentSpeed);
+        Vector3 collResult = CollisionScript.CollisionManage(allWalls, player.position, 0.75f, player.forward * playerCurrentSpeed);
         if (collResult != Vector3.zero) player.position = collResult;
+        UpdateGameState();
     }
 
 
