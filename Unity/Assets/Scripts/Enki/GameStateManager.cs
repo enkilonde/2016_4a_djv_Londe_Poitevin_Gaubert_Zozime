@@ -6,12 +6,14 @@ public class GameStateManager : MonoBehaviour
 
     public GameState gameState;
     public Transform player;
+    public Transform AI;
 
     public float rotationSpeed = 90;
     public float maxSpeed = 15;
     public float accelerationTime = 2;
     public float grassSlowFactor = 5;
     public float grassMaxSpeed = 0.2f;
+    public Transform[] goalTransforms;
 
     LevelManager levelManagerScript;
 
@@ -28,14 +30,20 @@ public class GameStateManager : MonoBehaviour
 
     void InitGameState()
     {
-        gameState.player.rotationSpeed = rotationSpeed;
-        gameState.player.maxSpeed = maxSpeed;
-        gameState.player.accelerationTime = accelerationTime;
-        gameState.player.grassSlowFactor = grassSlowFactor;
-        gameState.player.grassMaxSpeed = grassMaxSpeed;
-        gameState.player.grassDecelerate = 1;
+        initVehicle(ref gameState.player);
+        initVehicle(ref gameState.AI);
 
         UpdateGameState();
+    }
+
+    void initVehicle(ref VehicleProperties vehicle)
+    {
+        vehicle.rotationSpeed = rotationSpeed;
+        vehicle.maxSpeed = maxSpeed;
+        vehicle.accelerationTime = accelerationTime;
+        vehicle.grassSlowFactor = grassSlowFactor;
+        vehicle.grassMaxSpeed = grassMaxSpeed;
+        vehicle.grassDecelerate = 1;
     }
 
 
@@ -52,7 +60,8 @@ public class GameStateManager : MonoBehaviour
         gameState.player.position = player.position;
         gameState.player.orientation = player.rotation.eulerAngles.y;
 
-
+        gameState.AI.position = AI.position;
+        gameState.AI.orientation = AI.rotation.eulerAngles.y;
     }
 
     void ApplyNextState()
@@ -72,13 +81,23 @@ public class GameStateManager : MonoBehaviour
         if (Input.GetAxisRaw("Vertical") < 0)
             inputsSum = inputsSum | VehicleAction.BRAKE;
 
-        CustomTransform _t = gameState.player.UpdateVehicle(inputsSum, isEntityInGrass(gameState.player.position));
-        player.transform.position = _t.position;
-        player.transform.rotation = _t.rotation;
+        CustomTransform playerTransform = gameState.player.UpdateVehicle(inputsSum, isEntityInGrass(gameState.player.position));
+        player.transform.position = playerTransform.position;
+        player.transform.rotation = playerTransform.rotation;
+
+        VehicleAction AIInputs = VehicleAction.RIGHT | VehicleAction.ACCELERATE;
+        CustomTransform AITransform = gameState.AI.UpdateVehicle(AIInputs, isEntityInGrass(gameState.AI.position));
+        AI.transform.position = AITransform.position;
+        AI.transform.rotation = AITransform.rotation;
 
         if (isEntityOnCheckpoint(gameState.player.position))
         {
             levelManagerScript.PassCheckpoint(GetEntityTile(gameState.player.position));
+        }
+
+        if (isEntityOnCheckpoint(gameState.AI.position))
+        {
+            levelManagerScript.PassCheckpoint(GetEntityTile(gameState.AI.position));
         }
     }
 
@@ -86,7 +105,7 @@ public class GameStateManager : MonoBehaviour
 
     void ForSee()
     {
-
+//        ForecastEngine.FindBestActions(gameState, )
 
 
     }
