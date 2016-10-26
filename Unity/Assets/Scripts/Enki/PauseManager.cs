@@ -84,7 +84,7 @@ public class PauseManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space)) // Skip ReadyGo
         {
             StopCoroutine(ReadyGo(delayBetweenNumbers));
-            isGameStopped = true;
+            isGameStopped = false;
             canvasReadyGo.gameObject.SetActive(false);
         }
 
