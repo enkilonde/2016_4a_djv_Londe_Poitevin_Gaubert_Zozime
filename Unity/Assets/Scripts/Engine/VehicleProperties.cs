@@ -23,8 +23,10 @@ public struct VehicleProperties
     public VehicleAction action;
     public int nextWaypointIndex;
 
+    public float currentSpeed;
 
-    //Variables internes
+
+//Variables internes
     public float speedAcceleration;
 
 
@@ -74,6 +76,8 @@ public struct VehicleProperties
         output.position = position + speedIncrement * (output.rotation * Vector3.forward);
 
         position += speedIncrement * (output.rotation * Vector3.forward);
+
+        currentSpeed = speedIncrement;
 
         return output;
     }

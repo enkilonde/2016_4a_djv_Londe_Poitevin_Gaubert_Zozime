@@ -8,7 +8,7 @@ public class CollisionScript
     {
         int nbcoll = 0;
         Vector3 prevColl = new Vector3(0, 0, 0);
-        Vector3 result = new Vector3(0, 0, 0);
+        Vector3 result = PlayerPos;
         for (int i = 0; i < walls.Length; i++)
         {
             Vector3 n_Pos = ReplaceWallCollision(walls[i], PlayerPos, radius, vel);
@@ -24,7 +24,6 @@ public class CollisionScript
             {
                 if (n_Pos != Vector3.zero)
                 {
-                    //Debug.Log("X : " + n_Pos.x + " | Y : " + n_Pos.y + " | Z : " + n_Pos.z);
                     nbcoll++;
                     prevColl = n_Pos;
                     result = n_Pos;

@@ -108,6 +108,19 @@ public class GameStateManager : MonoBehaviour
 
     }
 
+    public GameState ComputeGameState(GameState state, VehicleAction action)
+    {
+        state.player.UpdateVehicle(state.player.action, isEntityInGrass(state.player.position));
+        state.player.position = CollisionScript.CollisionManage(allWalls, state.player.position, 0.75f,
+            state.player.currentSpeed * (Quaternion.AngleAxis(state.player.orientation, Vector3.up) * Vector3.forward));
+
+        state.AI.UpdateVehicle(action, isEntityInGrass(state.AI.position));
+        state.AI.position = CollisionScript.CollisionManage(allWalls, state.AI.position, 0.75f,
+            state.AI.currentSpeed * (Quaternion.AngleAxis(state.AI.orientation, Vector3.up) * Vector3.forward));
+
+        return state;
+    }
+
     void ApplyPhysics()
     {
         Vector3 collResult = CollisionScript.CollisionManage(allWalls, player.position, 0.75f, player.forward * playerCurrentSpeed);
