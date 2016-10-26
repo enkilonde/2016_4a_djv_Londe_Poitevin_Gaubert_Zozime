@@ -13,9 +13,10 @@ public class GameStateManager : MonoBehaviour
     //Private refs
     LevelManager levelManagerScript;
     PauseManager pauseManagerScript;
+    Transform[] allWalls;
 
     //internal
-    float playerCurrentSpeed = 0;
+    float playerCurrentSpeed;
 
     [Header("Vehicle Properties")]
     public float rotationSpeed = 90;
@@ -32,6 +33,13 @@ public class GameStateManager : MonoBehaviour
     {
         levelManagerScript = FindObjectOfType<LevelManager>();
         pauseManagerScript = FindObjectOfType<PauseManager>();
+
+        GameObject[] WallsTemp = GameObject.FindGameObjectsWithTag("Wall");
+        allWalls = new Transform[WallsTemp.Length];
+        for (int i = 0; i < WallsTemp.Length; i++)
+        {
+            allWalls[i] = WallsTemp[i].transform;
+        }
 
         InitGameState();
 
@@ -53,23 +61,16 @@ public class GameStateManager : MonoBehaviour
     void Update()
     {
         if (pauseManagerScript.paused) return;
-
-        UpdateGameState();
         ApplyNextState();
-        UpdateSpeedIndicator();
+        ApplyPhysics();
+
+
     }
 
     void UpdateGameState()
     {
         gameState.player.position = player.position;
         gameState.player.orientation = player.rotation.eulerAngles.y;
-
-    }
-
-    void UpdateSpeedIndicator()
-    {
-        playerCurrentSpeed = gameState.player.speedAcceleration; // get the speed of the player
-        speedIndicator.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(42, -220, playerCurrentSpeed));
     }
 
     void ApplyNextState()
@@ -91,16 +92,33 @@ public class GameStateManager : MonoBehaviour
 
         CustomTransform _t = gameState.player.UpdateVehicle(inputsSum, isEntityInGrass(gameState.player.position));
 
-
-
         player.transform.position = _t.position;
         player.transform.rotation = _t.rotation;
-        
+
+        playerCurrentSpeed = gameState.player.speedAcceleration; // get the speed of the player
+
+
         if (isEntityOnCheckpoint(gameState.player.position))
         {
             bool insideRoad;
             levelManagerScript.PassCheckpoint(GetEntityTile(gameState.player.position, out insideRoad));
         }
+
+        UpdateSpeedIndicator();
+
+    }
+
+    void ApplyPhysics()
+    {
+        Vector3 collResult = CollisionScript.CollisionManage(allWalls, player.position, 0.5f, player.forward * playerCurrentSpeed);
+        if (collResult != Vector3.zero) player.position = collResult;
+    }
+
+
+
+    void UpdateSpeedIndicator()
+    {
+        speedIndicator.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(42, -220, playerCurrentSpeed));
     }
 
     void ForSee()

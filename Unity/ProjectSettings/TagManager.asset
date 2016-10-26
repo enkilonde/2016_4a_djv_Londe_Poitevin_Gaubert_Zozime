@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Grass
   - Tiles
+  - Wall
   layers:
   - Default
   - TransparentFX

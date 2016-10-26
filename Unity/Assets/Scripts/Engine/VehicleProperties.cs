@@ -63,13 +63,14 @@ public struct VehicleProperties
             orientationIncrement = -rotationSpeed * deltaTime;
         }
 
-       
-
         orientation = orientation + orientationIncrement;
 
         CustomTransform output;
         output.rotation = Quaternion.AngleAxis(orientation, Vector3.up);
         output.position = position + speedIncrement * (output.rotation * Vector3.forward);
+
+        position += speedIncrement * (output.rotation * Vector3.forward);
+
         return output;
     }
 }

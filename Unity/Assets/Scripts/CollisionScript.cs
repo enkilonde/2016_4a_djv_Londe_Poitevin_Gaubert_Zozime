@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CollisionScript : MonoBehaviour
+public class CollisionScript
 {
     // walls = tableau de murs à tester  |  PlayerPos = Position à tester pour collision  |  radius = rayon de collision de l'unité  |   vel = vitesse + direction de l'unité
-    public Vector3 CollisionManage(Transform[] walls, Vector3 PlayerPos, float radius, Vector3 vel)
+    public static Vector3 CollisionManage(Transform[] walls, Vector3 PlayerPos, float radius, Vector3 vel)
     {
         int nbcoll = 0;
         Vector3 prevColl = new Vector3(0, 0, 0);
@@ -34,7 +34,7 @@ public class CollisionScript : MonoBehaviour
         return result;
     }
 
-    Vector3 ReplaceWallCollision(Transform wall, Vector3 PlayerPos, float PlayerRadius, Vector3 vel)
+    static Vector3 ReplaceWallCollision(Transform wall, Vector3 PlayerPos, float PlayerRadius, Vector3 vel)
     {
         bool XisLenght;
         float lenght;
@@ -103,7 +103,7 @@ public class CollisionScript : MonoBehaviour
 
     }
 
-    Vector3 CheckWallCollision(Transform wall, Vector3 PlayerPos, float PlayerRadius, Vector3 vel)
+    static Vector3 CheckWallCollision(Transform wall, Vector3 PlayerPos, float PlayerRadius, Vector3 vel)
     {
         bool XisDirection;
         float lenght;
@@ -150,7 +150,7 @@ public class CollisionScript : MonoBehaviour
     }
 
     //A = Wall Origin, B = Wall End
-    bool CollisionDroite(Vector2 A, Vector2 B, Vector3 C, float radius)
+    static bool CollisionDroite(Vector2 A, Vector2 B, Vector3 C, float radius)
     {
         Vector2 u;
         u.x = B.x - A.x;
@@ -174,7 +174,7 @@ public class CollisionScript : MonoBehaviour
         }
     }
 
-    bool CollisionSegment(Vector2 A, Vector2 B, Vector3 C, float radius)
+    static bool CollisionSegment(Vector2 A, Vector2 B, Vector3 C, float radius)
     {
         if (CollisionDroite(A, B, C, radius) == false)
             return false;  // si on ne touche pas la droite, on ne touchera jamais le segment
