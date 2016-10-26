@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class ForecastEngine : MonoBehaviour
 {
+    public GameObject sphereDebugPrefab;
+    void SpawnSpherePrefab(Vector3 position, Vector3 target)
+    {
+        GameObject newSphere = (GameObject)GameObject.Instantiate(sphereDebugPrefab);
+        newSphere.transform.position = position;
+        newSphere.transform.localScale = new Vector3(0.01f, 2f / Vector3.Distance(target, position), 0.01f);
+    }
 
     public struct Node
     {
@@ -42,16 +49,17 @@ public class ForecastEngine : MonoBehaviour
 
     public void Awake()
     {
-        Reset();
         openList = new List<Node>(maxIterations);
         closedList = new List<Node>(maxIterations);
         childrenList = new Node[validActions.Length];
+        Reset();
     }
 
     public void Reset()
     {
         iteration = 0;
         openList.Clear();
+        closedList.Clear();
     }
 
     public void SetGoalState(GameState state)
@@ -73,7 +81,7 @@ public class ForecastEngine : MonoBehaviour
 
         while (openList.Count > 0 && iteration < maxIterations)
         {
-            int currentNodeIndex = GetPrioritaryIndex();
+            int currentNodeIndex = GetPrioritaryIndex(openList);
             Node currentNode = openList[currentNodeIndex];
             openList.RemoveAt(currentNodeIndex);
 
@@ -83,21 +91,47 @@ public class ForecastEngine : MonoBehaviour
                 openList.Add(child);
             }
 
-            closedList.Add(currentNode);
+            if (currentNode.rootIndex != -1)
+            {
+                closedList.Add(currentNode);
+            }
+            else
+            {
+                //Debug.Log(iteration);
+            }
+            iteration++;
         }
 
-        return VehicleAction.NO_INPUT;
+        int bestNodeIndex = GetPrioritaryIndex(closedList);
+        bestNodeIndex = closedList[bestNodeIndex].rootIndex;
+
+        //Debug.Log("bestNodeIndex = " + bestNodeIndex + "; ClosedList count = " + closedList.Count);
+        Debug.Log(closedList[bestNodeIndex].state.AI.action);
+        return closedList[bestNodeIndex].state.AI.action;
     }
 
-    private int GetPrioritaryIndex()
+    private int GetPrioritaryIndex(List<Node> list)
     {
-        // todo (prend en compte le cout + heuristique)
-        return 0;
+        float minValue = float.MaxValue;
+        int prioritaryIndex = 0;
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            float currentValue = (list[i].cost * list[i].cost * Time.fixedDeltaTime * Time.fixedDeltaTime) + list[i].heuristicValue;
+            if (currentValue < minValue)
+            {
+                minValue = currentValue;
+                prioritaryIndex = i;
+            }
+        }
+
+        //if (list == closedList) Debug.Log("prioritaryIndex = " + prioritaryIndex + "on = " + list.Count);
+        return prioritaryIndex;
     }
 
     private float GetHeuristicValue(ref GameState start, ref GameState goal)
     {
-        return Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (goal.AI.maxSpeed * goal.AI.maxSpeed);
+        return Vector3.SqrMagnitude((goal.AI.position - start.AI.position) / (start.AI.maxSpeed * start.AI.maxSpeed));
     }
 
     private void GenerateChildren(ref Node node)
@@ -106,19 +140,18 @@ public class ForecastEngine : MonoBehaviour
         {
             VehicleAction action = validActions[i];
             childrenList[i].cost = node.cost + 1;
-            childrenList[i].state = node.state;
-            childrenList[i].state = gameStateManager.ComputeGameState(childrenList[i].state, action);
-
+            childrenList[i].state = gameStateManager.ComputeGameState(node.state, action);
+            
             if (node.rootIndex == -1)
             {
-                childrenList[i].rootIndex = i + 1;
+                childrenList[i].rootIndex = i;
             }
             else
             {
                 childrenList[i].rootIndex = node.rootIndex;
             }
-
             childrenList[i].heuristicValue = GetHeuristicValue(ref childrenList[i].state, ref goalState);
+
         }
     }
 
