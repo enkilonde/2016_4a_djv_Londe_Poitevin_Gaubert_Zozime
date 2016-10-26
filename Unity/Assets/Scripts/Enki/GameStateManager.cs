@@ -95,10 +95,11 @@ public class GameStateManager : MonoBehaviour
 
         player.transform.position = _t.position;
         player.transform.rotation = _t.rotation;
-
+        
         if (isEntityOnCheckpoint(gameState.player.position))
         {
-            levelManagerScript.PassCheckpoint(GetEntityTile(gameState.player.position));
+            bool insideRoad;
+            levelManagerScript.PassCheckpoint(GetEntityTile(gameState.player.position, out insideRoad));
         }
     }
 
@@ -113,9 +114,9 @@ public class GameStateManager : MonoBehaviour
 
     GroundType isEntityInGrass(Vector3 entityPos)
     {
-
-        Transform tile = GetEntityTile(entityPos);
-
+        bool insideRoad;
+        Transform tile = GetEntityTile(entityPos, out insideRoad);
+        if (!insideRoad) return GroundType.Grass;
         Vector2 relativePos = GetPosInTile(entityPos, tile.position);
 
         switch (tile.name)
@@ -136,7 +137,8 @@ public class GameStateManager : MonoBehaviour
 
     bool isEntityOnCheckpoint(Vector3 entityPos)
     {
-        Transform tile = GetEntityTile(entityPos);
+        bool insideRoad;
+        Transform tile = GetEntityTile(entityPos, out insideRoad);
 
         Vector2 relativePos = GetPosInTile(entityPos, tile.position);
 
@@ -151,10 +153,26 @@ public class GameStateManager : MonoBehaviour
         return false;
     }
 
-    Transform GetEntityTile(Vector3 entityPos)
+    Transform GetEntityTile(Vector3 entityPos, out bool insideRoad)
     {
-        //Debug.Log("Player pos : (" + (int)entityPos.x / 10 + ", " + (int)entityPos.z / 10 + ")");
-        return levelManagerScript.tiles[(int)entityPos.x / 10, (int)entityPos.z / 10].transform;
+        try
+        {
+            insideRoad = true;
+            return levelManagerScript.tiles[(int)entityPos.x / 10, (int)entityPos.z / 10].transform;
+        }
+        catch
+        {
+            insideRoad = false;
+            for (int i = 0; i < levelManagerScript.tiles.GetLength(0); i++)
+            {
+                for (int j = 0; j < levelManagerScript.tiles.GetLength(1); j++)
+                {
+                    if (levelManagerScript.tiles[i, j]) return levelManagerScript.tiles[i, j].transform;
+                }
+            }
+        }
+        insideRoad = false;
+        return null;
     }
 
     Vector2 GetPosInTile(Vector3 playerpos, Vector3 Tilepos)

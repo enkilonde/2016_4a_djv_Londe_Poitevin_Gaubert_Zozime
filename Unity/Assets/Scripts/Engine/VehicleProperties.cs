@@ -32,7 +32,7 @@ public struct VehicleProperties
         float orientationIncrement = 0.0f;
         float speedIncrement = 0.0f;
 
-        if (groundType == GroundType.Grass)
+        if (groundType == GroundType.Grass || groundType == GroundType.Wall)
         {
             if(speedAcceleration > grassMaxSpeed)
             speedAcceleration = Mathf.Clamp(speedAcceleration - deltaTime * grassSlowFactor, grassMaxSpeed, 1);
