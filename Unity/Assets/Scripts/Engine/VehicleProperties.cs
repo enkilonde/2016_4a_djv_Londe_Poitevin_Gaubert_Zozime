@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public struct VehicleProperties
 {
     private float deltaTime
     {
-        get { return AStar.FIXED_STEP; }
+        get { return ForecastEngine.FIXED_STEP; }
     }
 
     //Valeurs à initialiser
@@ -77,6 +78,31 @@ public struct VehicleProperties
         output.rotation = Quaternion.AngleAxis(orientation, Vector3.up);
         output.position = position + speedIncrement * (output.rotation * Vector3.forward); //experimental
         return output;
+    }
+
+    public static int GetInputCombinationCount()
+    {
+        int allFlagsOnVehicleAction = (int)GetAllFlagsOnVehicleAction();
+        // On ne compte pas les cas suivants
+        // left + right
+        // accelerate + brake
+
+        // On compte NO_INPUT
+
+        // Il y a donc deux combinaisons à retirer et une à ajouter
+
+        return allFlagsOnVehicleAction - 1;
+    }
+
+    public static VehicleAction GetAllFlagsOnVehicleAction()
+    {
+        VehicleAction allFlagsOn = VehicleAction.NO_INPUT;
+        foreach (VehicleAction action in Enum.GetValues(typeof(VehicleAction)))
+        {
+            allFlagsOn |= action;
+        }
+
+        return allFlagsOn;
     }
 }
 
