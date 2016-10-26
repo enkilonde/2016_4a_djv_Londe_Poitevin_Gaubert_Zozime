@@ -12,6 +12,8 @@ public class CameraFollowPlayer : MonoBehaviour
     Vector3 lookAtposition;
     Transform TargetPosition;
 
+    ParticleSystem speedFx;
+
     void Awake()
     {
         gameStateManagerScript = FindObjectOfType<GameStateManager>();
@@ -20,6 +22,8 @@ public class CameraFollowPlayer : MonoBehaviour
         TargetPosition = PosTarget.transform;
         TargetPosition.position = transform.position;
         TargetPosition.SetParent(player);
+        speedFx = transform.GetChild(0).GetComponent<ParticleSystem>();
+
     }
 
     void Update ()
@@ -28,6 +32,9 @@ public class CameraFollowPlayer : MonoBehaviour
         transform.LookAt(player);
 
         cam.fieldOfView = Mathf.Lerp(50, 100, gameStateManagerScript.playerCurrentSpeed);
+
+        ParticleSystem.EmissionModule emmMod = speedFx.emission;
+        emmMod.rate = Mathf.Lerp(-50, 50, gameStateManagerScript.playerCurrentSpeed);
 
 
     }

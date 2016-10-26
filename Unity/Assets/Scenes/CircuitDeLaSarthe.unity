@@ -134,16 +134,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 114000011416452698, guid: 583dd7b417e1a0e409adb874b69b2759,
-        type: 2}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 24066482}
-    - target: {fileID: 114000010692905458, guid: 583dd7b417e1a0e409adb874b69b2759,
-        type: 2}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 24066482}
     - target: {fileID: 114000010291628596, guid: 583dd7b417e1a0e409adb874b69b2759,
         type: 2}
       propertyPath: checkpoints.Array.data[0]
@@ -164,11 +154,16 @@ Prefab:
       propertyPath: checkpoints.Array.data[3]
       value: 
       objectReference: {fileID: 818337775}
-    - target: {fileID: 20000013419927806, guid: 583dd7b417e1a0e409adb874b69b2759,
+    - target: {fileID: 114000010692905458, guid: 583dd7b417e1a0e409adb874b69b2759,
         type: 2}
-      propertyPath: field of view
-      value: 50
-      objectReference: {fileID: 0}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 24066482}
+    - target: {fileID: 114000011416452698, guid: 583dd7b417e1a0e409adb874b69b2759,
+        type: 2}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 24066482}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 583dd7b417e1a0e409adb874b69b2759, type: 2}
   m_IsPrefabParent: 0
