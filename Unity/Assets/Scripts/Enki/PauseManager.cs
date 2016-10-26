@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PauseManager : MonoBehaviour
@@ -10,6 +11,9 @@ public class PauseManager : MonoBehaviour
     public Transform canvasReadyGo;
     public float delayBetweenNumbers = 1.25f;
     public Transform endTrackCanvas;
+
+    public Text chronometerText;
+    float elapsedTime = 0f;
 
     void Start ()
     {
@@ -64,7 +68,27 @@ public class PauseManager : MonoBehaviour
             TriggerPause();
         }
 
+        if (!paused)
+        {
+            UpdateChronometer();
+        }
+
 	}
+
+    public void UpdateChronometer()
+    {
+        elapsedTime += Time.deltaTime;
+        int minutes = Mathf.FloorToInt(elapsedTime) / 60;
+        int seconds = Mathf.FloorToInt(elapsedTime) % 60; 
+        int decimals = Mathf.FloorToInt(elapsedTime * 100f) % 100;
+        string theMinutes;
+        string theSeconds;
+        string theDecimals;
+        if (minutes < 10) { theMinutes = "0" + minutes; } else { theMinutes = "" + minutes; }
+        if (seconds < 10) { theSeconds = "0" + seconds; } else { theSeconds = "" + seconds; }
+        if (decimals < 10) { theDecimals = "0" + decimals; } else { theDecimals = "" + decimals; }
+        chronometerText.text = "Time = " + theMinutes + " : " + theSeconds + " \" " + theDecimals;
+    }
 
     public void TriggerPause()
     {
@@ -74,6 +98,8 @@ public class PauseManager : MonoBehaviour
 
     public void EndTrack(bool isPlayerWinner)
     {
+        paused = true;
+
         endTrackCanvas.gameObject.SetActive(true);
 
         if (isPlayerWinner)
