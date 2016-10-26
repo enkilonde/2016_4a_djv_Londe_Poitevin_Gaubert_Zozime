@@ -21,7 +21,7 @@ GameObject:
   - 4: {fileID: 4000012193559902}
   - 33: {fileID: 33000012318390720}
   - 23: {fileID: 23000010082081108}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: roadtile_curve_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013135125048}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: roadtile_curve
   m_TagString: Tiles
   m_Icon: {fileID: 0}

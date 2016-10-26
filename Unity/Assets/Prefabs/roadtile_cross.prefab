@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010296260046}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: roadtile_cross
   m_TagString: Tiles
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   - 4: {fileID: 4000013660563890}
   - 33: {fileID: 33000012392188786}
   - 23: {fileID: 23000011024755140}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: roadtile_cross_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}

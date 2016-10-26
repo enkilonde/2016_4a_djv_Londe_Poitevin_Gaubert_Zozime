@@ -24,9 +24,7 @@ public struct VehicleProperties
 
 
     //Variables internes
-    float speedAcceleration;
-    public float grassDecelerate;
-
+    public float speedAcceleration;
 
 
     public CustomTransform UpdateVehicle(VehicleAction action, bool isInGrass)

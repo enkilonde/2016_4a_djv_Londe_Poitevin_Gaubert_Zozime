@@ -21,7 +21,7 @@ GameObject:
   - 4: {fileID: 4000012864756800}
   - 33: {fileID: 33000011414370486}
   - 23: {fileID: 23000011500038196}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: roadtile_checkpoint_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012855351490}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: roadtile_checkpoint
   m_TagString: Tiles
   m_Icon: {fileID: 0}

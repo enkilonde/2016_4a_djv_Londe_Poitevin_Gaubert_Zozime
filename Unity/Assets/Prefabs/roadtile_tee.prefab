@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010045546726}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: roadtile_tee
   m_TagString: Tiles
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   - 4: {fileID: 4000013579012734}
   - 33: {fileID: 33000014282535052}
   - 23: {fileID: 23000011861417408}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: roadtile_tee_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}

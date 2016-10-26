@@ -6,6 +6,7 @@ public class GameStateManager : MonoBehaviour
     //Public refs
     public GameState gameState;
     public Transform player;
+    public Transform speedIndicator;
 
     //Private refs
     LevelManager levelManagerScript;
@@ -41,7 +42,6 @@ public class GameStateManager : MonoBehaviour
         gameState.player.accelerationTime = accelerationTime;
         gameState.player.grassSlowFactor = grassSlowFactor;
         gameState.player.grassMaxSpeed = grassMaxSpeed;
-        gameState.player.grassDecelerate = 1;
         gameState.player.brakePower = brakePower;
 
         UpdateGameState();
@@ -54,6 +54,7 @@ public class GameStateManager : MonoBehaviour
 
         UpdateGameState();
         ApplyNextState();
+        UpdateSpeedIndicator();
     }
 
     void UpdateGameState()
@@ -61,7 +62,12 @@ public class GameStateManager : MonoBehaviour
         gameState.player.position = player.position;
         gameState.player.orientation = player.rotation.eulerAngles.y;
 
+    }
 
+    void UpdateSpeedIndicator()
+    {
+        playerCurrentSpeed = gameState.player.speedAcceleration; // get the speed of the player
+        speedIndicator.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(42, -220, playerCurrentSpeed));
     }
 
     void ApplyNextState()
