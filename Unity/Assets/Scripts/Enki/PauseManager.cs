@@ -34,7 +34,6 @@ public class PauseManager : MonoBehaviour
     void Start ()
     {
         StartCoroutine(ReadyGo(delayBetweenNumbers));
-        Debug.Log("Paused = " + isGameStopped + " + "  + isInMenu + " + " + paused);
 	}
 
     IEnumerator ReadyGo (float delayBetweenNumbers)
