@@ -6,7 +6,23 @@ public class PauseManager : MonoBehaviour
 {
     public Canvas pauseCanvas;
 
-    public bool paused = true;
+    bool isGameStopped = true;
+    bool isInMenu = false;
+
+    public bool paused
+    {
+        get
+        {
+            if (isInMenu || isGameStopped)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 
     public Transform canvasReadyGo;
     public float delayBetweenNumbers = 1.25f;
@@ -18,30 +34,42 @@ public class PauseManager : MonoBehaviour
     void Start ()
     {
         StartCoroutine(ReadyGo(delayBetweenNumbers));
+        Debug.Log("Paused = " + isGameStopped + " + "  + isInMenu + " + " + paused);
 	}
 
     IEnumerator ReadyGo (float delayBetweenNumbers)
     {
         canvasReadyGo.gameObject.SetActive(true);
-
         yield return new WaitForSeconds(delayBetweenNumbers);
 
+        while (isInMenu) {
+            yield return new WaitForEndOfFrame();
+        }
 
         canvasReadyGo.GetChild(0).gameObject.SetActive(true); // 3
         yield return new WaitForSeconds(delayBetweenNumbers);
 
-
+        while (isInMenu)
+        {
+            yield return new WaitForEndOfFrame();
+        }
         canvasReadyGo.GetChild(0).gameObject.SetActive(false);
         canvasReadyGo.GetChild(1).gameObject.SetActive(true); // 2
         yield return new WaitForSeconds(delayBetweenNumbers);
 
-
+        while (isInMenu)
+        {
+            yield return new WaitForEndOfFrame();
+        }
         canvasReadyGo.GetChild(1).gameObject.SetActive(false);
         canvasReadyGo.GetChild(2).gameObject.SetActive(true); // 1
         yield return new WaitForSeconds(delayBetweenNumbers);
 
-        if(canvasReadyGo.gameObject.activeSelf) paused = false;
-
+        while (isInMenu)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        if (canvasReadyGo.gameObject.activeSelf) isGameStopped = false;  
         canvasReadyGo.GetChild(2).gameObject.SetActive(false);
         canvasReadyGo.GetChild(3).gameObject.SetActive(true); // GO
         yield return new WaitForSeconds(delayBetweenNumbers);
@@ -53,12 +81,10 @@ public class PauseManager : MonoBehaviour
 
     void Update ()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space)) // Skip ReadyGo
         {
             StopCoroutine(ReadyGo(delayBetweenNumbers));
-            paused = false;
-            canvasReadyGo.GetChild(2).gameObject.SetActive(false);
-            canvasReadyGo.GetChild(3).gameObject.SetActive(false);
+            isGameStopped = true;
             canvasReadyGo.gameObject.SetActive(false);
         }
 
@@ -93,12 +119,12 @@ public class PauseManager : MonoBehaviour
     public void TriggerPause()
     {
         pauseCanvas.enabled = !pauseCanvas.enabled;
-        paused = pauseCanvas.enabled;
+        isInMenu = pauseCanvas.enabled;
     }
 
     public void EndTrack(bool isPlayerWinner)
     {
-        paused = true;
+        isGameStopped = true;
 
         endTrackCanvas.gameObject.SetActive(true);
 
