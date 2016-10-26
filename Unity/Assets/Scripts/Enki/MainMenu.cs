@@ -9,6 +9,11 @@ public class MainMenu : MonoBehaviour
 
     public void LoadLevel(int levelIndex)
     {
+        if (levelIndex == -1)
+        {
+            levelIndex = SceneManager.GetActiveScene().buildIndex;
+        }
+
         if (levelIndex >= SceneManager.sceneCountInBuildSettings)
         {
             Debug.LogWarning("La scene d'index " + levelIndex + " n'existe pas !", this.gameObject);
