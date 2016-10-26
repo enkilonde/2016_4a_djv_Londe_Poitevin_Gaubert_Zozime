@@ -26,7 +26,7 @@ public class CameraFollowPlayer : MonoBehaviour
 
     }
 
-    void Update ()
+    void FixedUpdate ()
     {
         transform.position = Vector3.Lerp(transform.position, TargetPosition.position, Time.deltaTime * 8);
         transform.LookAt(player);

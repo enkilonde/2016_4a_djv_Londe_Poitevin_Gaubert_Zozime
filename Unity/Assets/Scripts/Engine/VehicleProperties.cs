@@ -5,7 +5,7 @@ public struct VehicleProperties
     private float deltaTime
     {
         //get { return AStar.FIXED_STEP; }
-        get { return Time.deltaTime; }
+        get { return Time.fixedDeltaTime; }
     }
 
     //Valeurs à initialiser
@@ -26,10 +26,12 @@ public struct VehicleProperties
 
     //Variables internes
     public float speedAcceleration;
+    float brakeAddRotation;
 
 
     public CustomTransform UpdateVehicle(VehicleAction action, GroundType groundType)
     {
+        brakeAddRotation = 1f;
         float orientationIncrement = 0.0f;
         float speedIncrement = 0.0f;
 
@@ -50,21 +52,22 @@ public struct VehicleProperties
         if ((action & VehicleAction.BRAKE) == VehicleAction.BRAKE)
         {
             speedAcceleration -= deltaTime / (accelerationTime / brakePower);
+            brakeAddRotation = 2f;
         }
-        speedAcceleration = Mathf.Clamp01(speedAcceleration);
 
         if ((action & VehicleAction.LEFT) == VehicleAction.LEFT)
         {
-            orientationIncrement = rotationSpeed * deltaTime;
+            orientationIncrement = rotationSpeed * deltaTime * brakeAddRotation;
             speedAcceleration -= deltaTime / accelerationTime / 2;
         }
 
         if ((action & VehicleAction.RIGHT) == VehicleAction.RIGHT)
         {
-            orientationIncrement = -rotationSpeed * deltaTime;
+            orientationIncrement = -rotationSpeed * deltaTime * brakeAddRotation;
             speedAcceleration -= deltaTime / accelerationTime / 2;
         }
 
+        speedAcceleration = Mathf.Clamp01(speedAcceleration);
         speedIncrement = maxSpeed * deltaTime * speedAcceleration;
 
         orientation = orientation + orientationIncrement;
