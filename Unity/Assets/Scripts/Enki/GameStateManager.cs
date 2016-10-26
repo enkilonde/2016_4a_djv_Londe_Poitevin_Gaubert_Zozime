@@ -16,7 +16,7 @@ public class GameStateManager : MonoBehaviour
     Transform[] allWalls;
 
     //internal
-    float playerCurrentSpeed;
+    [HideInInspector] public float playerCurrentSpeed;
 
     [Header("Vehicle Properties")]
     public float rotationSpeed = 90;

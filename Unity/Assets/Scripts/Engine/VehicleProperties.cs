@@ -4,7 +4,8 @@ public struct VehicleProperties
 {
     private float deltaTime
     {
-        get { return AStar.FIXED_STEP; }
+        //get { return AStar.FIXED_STEP; }
+        get { return Time.deltaTime; }
     }
 
     //Valeurs à initialiser
@@ -51,17 +52,20 @@ public struct VehicleProperties
             speedAcceleration -= deltaTime / (accelerationTime / brakePower);
         }
         speedAcceleration = Mathf.Clamp01(speedAcceleration);
-        speedIncrement = maxSpeed * deltaTime * speedAcceleration;
 
         if ((action & VehicleAction.LEFT) == VehicleAction.LEFT)
         {
             orientationIncrement = rotationSpeed * deltaTime;
+            speedAcceleration -= deltaTime / accelerationTime / 2;
         }
 
         if ((action & VehicleAction.RIGHT) == VehicleAction.RIGHT)
         {
             orientationIncrement = -rotationSpeed * deltaTime;
+            speedAcceleration -= deltaTime / accelerationTime / 2;
         }
+
+        speedIncrement = maxSpeed * deltaTime * speedAcceleration;
 
         orientation = orientation + orientationIncrement;
 
