@@ -23,12 +23,10 @@ public class GameStateManager : MonoBehaviour
     public float playerCurrentSpeed
     {
         get { return gameState.player.speedAcceleration; }
-        set { gameState.player.speedAcceleration = value; }
     }
     public float AICurrentSpeed
     {
         get { return gameState.AI.speedAcceleration; }
-        set { gameState.AI.speedAcceleration = value; }
     }
 
     [Header("Vehicle Properties")]
@@ -115,8 +113,6 @@ public class GameStateManager : MonoBehaviour
         player.transform.position = gameState.player.position;
         player.transform.rotation = Quaternion.AngleAxis(gameState.player.orientation, Vector3.up);
 
-        playerCurrentSpeed = gameState.player.speedAcceleration; // get the speed of the player
-
 
         if (isEntityOnCheckpoint(gameState.player.position))
         {
@@ -135,8 +131,6 @@ public class GameStateManager : MonoBehaviour
         gameState.AI = VehicleStaticProperties.UpdateVehicle(inputsSum, gameState.AI);
         AI.transform.position = gameState.AI.position;
         AI.transform.rotation = Quaternion.AngleAxis(gameState.AI.orientation, Vector3.up);
-
-        playerCurrentSpeed = gameState.player.speedAcceleration; // get the speed of the player
 
 
 
