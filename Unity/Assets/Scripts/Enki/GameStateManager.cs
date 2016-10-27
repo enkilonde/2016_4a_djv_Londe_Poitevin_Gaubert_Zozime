@@ -86,6 +86,7 @@ public class GameStateManager : MonoBehaviour
 
         gameState.AI.position = AI.position;
         gameState.AI.orientation = AI.rotation.eulerAngles.y;
+        //gameState.player.ground = isEntityInGrass(player.position);
 
     }
 
@@ -149,7 +150,8 @@ public class GameStateManager : MonoBehaviour
     {
 
         state.AI = VehicleStaticProperties.UpdateVehicle(action, state.AI);
-        
+        state.AI.ground = isEntityInGrass(state.AI.position);
+
         return state;
     }
 
@@ -174,9 +176,13 @@ public class GameStateManager : MonoBehaviour
 
     GroundType isEntityInGrass(Vector3 entityPos)
     {
-        bool insideRoad;
-        Transform tile = GetEntityTile(entityPos, out insideRoad);
-        if (!insideRoad) return GroundType.Grass;
+        Transform tile = GetEntityTile(entityPos);
+
+        if (tile == null)
+        {
+            return GroundType.Wall;
+        }
+
         Vector2 relativePos = GetPosInTile(entityPos, tile.position);
 
         switch (tile.name)

@@ -56,8 +56,8 @@ public class ForecastEngine : MonoBehaviour
     
     public void Awake()
     {
-        openList = new List<Node>(maxIterations);
-        closedList = new List<Node>(maxIterations);
+        openList = new List<Node>(maxIterations + 9);
+        closedList = new List<Node>(maxIterations + 9);
         childrenList = new Node[validActions.Length];
         Reset();
     }
@@ -104,7 +104,6 @@ public class ForecastEngine : MonoBehaviour
             {
                 //Debug.Log(iteration);
             }
-            iteration++;
         }
 
         int bestNodeIndex = GetPrioritaryIndex(closedList);
@@ -122,13 +121,13 @@ public class ForecastEngine : MonoBehaviour
     {
         foreach (Node child in childrenList)
         {
-            openList.Add(child);
+            if (child.state.AI.ground != GroundType.Wall) { openList.Add(child); }
         }
     }
 
     private int GetPrioritaryIndex(List<Node> list)
     {
-        float minValue = 999999;
+        float minValue = 999999f;
         int prioritaryIndex = 0;
         float fixedTime = Time.fixedDeltaTime;
 
@@ -172,6 +171,7 @@ public class ForecastEngine : MonoBehaviour
             }
             childrenList[i].heuristicValue = GetHeuristicValue(ref childrenList[i].state, ref goalState);
 
+            iteration++;
         }
     }
 
