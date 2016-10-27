@@ -138,12 +138,8 @@ public class ForecastEngine : MonoBehaviour
         for (int i = 0; i < listLenght; i++)
         {
             Node nodeTemp = nodesList[i];
-            //float currentValue = (list[i].cost * list[i].cost * Time.fixedDeltaTime * Time.fixedDeltaTime) + list[i].heuristicValue;
-            //float currentValue = (nodeTemp.cost * nodeTemp.cost * fixedTime * fixedTime) + nodeTemp.heuristicValue;
             float currentValue = nodeTemp.GetCurrentValue(fixedTime);
             
-
-
             if (currentValue < minValue)
             {
                 minValue = currentValue;

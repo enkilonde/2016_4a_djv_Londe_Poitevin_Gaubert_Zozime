@@ -225,6 +225,8 @@ GameObject:
   - 4: {fileID: 4000011739729556}
   - 114: {fileID: 114000010692905458}
   - 114: {fileID: 114000010291628596}
+  - 114: {fileID: 114000013881255556}
+  - 114: {fileID: 114000012855312922}
   m_Layer: 0
   m_Name: GameStateManager
   m_TagString: Untagged
@@ -827,7 +829,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012749847850}
   m_LocalRotation: {x: 0.2869752, y: -0, z: -0, w: 0.957938}
-  m_LocalPosition: {x: 4.99, y: 3.27, z: 18}
+  m_LocalPosition: {x: 3.56, y: 3.27, z: 18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 33.343002, y: 0, z: 0}
   m_Children:
@@ -1222,8 +1224,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  AI: {fileID: 0}
   speedIndicator: {fileID: 224000011338443408}
-  playerCurrentSpeed: 0
+  forecastEngine: {fileID: 114000013881255556}
+  destination: {fileID: 0}
   rotationSpeed: 90
   maxSpeed: 40
   accelerationTime: 5
@@ -2025,6 +2029,21 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114000012855312922
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011148905860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f60b1e4f416e2194fa96a6c5f0210e92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathPoints: []
+  levelManager: {fileID: 114000010291628596}
+  IAtransform: {fileID: 0}
+  laps: 1
 --- !u!114 &114000012915093956
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2345,6 +2364,21 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Main Menu
+--- !u!114 &114000013881255556
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011148905860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08dae18884f9b054387decbd6a7baee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sphereDebugPrefab: {fileID: 1000012967839080, guid: a6a9f57803bd25f458c4bd944b80efec,
+    type: 2}
+  gameStateManager: {fileID: 114000010692905458}
+  maxIterations: 50
 --- !u!114 &114000013944512298
 MonoBehaviour:
   m_ObjectHideFlags: 1
