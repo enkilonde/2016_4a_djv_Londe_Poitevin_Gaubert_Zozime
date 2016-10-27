@@ -133,9 +133,9 @@ public class ForecastEngine : MonoBehaviour
         float fixedTime = Time.fixedDeltaTime;
 
         Node[] nodesList = list.ToArray();
-
+        int listLenght = nodesList.Length;
         //Debug.Log(list.Count);
-        for (int i = 0; i < list.Count; i++)
+        for (int i = 0; i < listLenght; i++)
         {
             Node nodeTemp = nodesList[i];
             //float currentValue = (list[i].cost * list[i].cost * Time.fixedDeltaTime * Time.fixedDeltaTime) + list[i].heuristicValue;
