@@ -6,9 +6,9 @@ public class LevelManager : MonoBehaviour
     /**
         Structure de la piste
     **/
-    public int levelWidth = 500;
-    public int levelHeight = 500;
-    private GameObject[] tiles;
+    public static int levelWidth = 500;
+    public static int levelHeight = 500;
+    static private GameObject[] tiles;
 
 
     /**
@@ -53,12 +53,12 @@ public class LevelManager : MonoBehaviour
         CheckpointsUICounter.text = "Checkpoints : " + playerCheckpointCount % checkpoints.Length + " / " + (checkpoints.Length - 1);
     }
 
-    public GameObject GetTileAt(int x, int y)
+    static public GameObject GetTileAt(int x, int y)
     {
         return tiles[y * levelHeight + x];
     }
 
-    public void SetTileAt(int x, int y, GameObject go)
+    static public void SetTileAt(int x, int y, GameObject go)
     {
         tiles[y * levelHeight + x] = go;
     }

@@ -13,7 +13,6 @@ public class ForecastEngine : MonoBehaviour
         //float currentValue = (nodeTemp.cost * nodeTemp.cost * fixedTime * fixedTime) + nodeTemp.heuristicValue;
         public float GetCurrentValue(float fixedTime)
         {
-            
             return (cost * cost * fixedTime * fixedTime) + heuristicValue;
         }
 
@@ -34,7 +33,7 @@ public class ForecastEngine : MonoBehaviour
         VehicleAction.NO_INPUT
     };
 
-    GameStateManager gameStateManager;
+    public GameStateManager gameStateManager;
 
     private List<Node> openList;
     private List<Node> closedList;
@@ -93,10 +92,6 @@ public class ForecastEngine : MonoBehaviour
             if (currentNode.rootIndex != -1)
             {
                 closedList.Add(currentNode);
-            }
-            else
-            {
-                //Debug.Log(iteration);
             }
         }
 

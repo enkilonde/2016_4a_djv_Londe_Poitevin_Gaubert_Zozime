@@ -89,7 +89,7 @@ public class GameStateManager : MonoBehaviour
 
         gameState.AI.position = AI.position;
         gameState.AI.orientation = AI.rotation.eulerAngles.y;
-
+        gameState.player.ground = isEntityInGrass(player.position);
     }
 
     void ApplyPlayerNextState()
@@ -173,7 +173,7 @@ public class GameStateManager : MonoBehaviour
         speedIndicator.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(42, -220, playerCurrentSpeed));
     }
 
-    GroundType isEntityInGrass(Vector3 entityPos)
+    static GroundType isEntityInGrass(Vector3 entityPos)
     {
         Transform tile = GetEntityTile(entityPos);
 
@@ -221,7 +221,7 @@ public class GameStateManager : MonoBehaviour
         return false;
     }
 
-    Transform GetEntityTile(Vector3 entityPos)
+    static Transform GetEntityTile(Vector3 entityPos)
     {
 
 
@@ -229,14 +229,14 @@ public class GameStateManager : MonoBehaviour
         int y = (int)entityPos.z / 10;
 
         // Out of level bounds
-        if (x < 0 || x > levelManagerScript.levelWidth - 1 || y < 0 || y > levelManagerScript.levelHeight - 1)
+        if (x < 0 || x > LevelManager.levelWidth - 1 || y < 0 || y > LevelManager.levelHeight - 1)
         {
             return null;
         }
 
 
         // We get our game object
-        GameObject go = levelManagerScript.GetTileAt((int)entityPos.x / 10, (int)entityPos.z / 10);
+        GameObject go = LevelManager.GetTileAt((int)entityPos.x / 10, (int)entityPos.z / 10);
 
         // Isn't null ? We return the transform
         if (go != null)
@@ -246,7 +246,7 @@ public class GameStateManager : MonoBehaviour
         return null;
     }
 
-    Vector2 GetPosInTile(Vector3 playerpos, Vector3 Tilepos)
+    static Vector2 GetPosInTile(Vector3 playerpos, Vector3 Tilepos)
     {
         return new Vector2(playerpos.x - Tilepos.x, playerpos.z - Tilepos.z);
     }
@@ -267,7 +267,7 @@ public class GameStateManager : MonoBehaviour
         return false;
     }
 
-    GroundType GetCheckpointTileGrass(Transform tile, Vector2 relativpos)
+    static GroundType GetCheckpointTileGrass(Transform tile, Vector2 relativpos)
     {
         float rotationY = tile.rotation.eulerAngles.y;
 
@@ -292,7 +292,7 @@ public class GameStateManager : MonoBehaviour
         return GroundType.Road;
     }
 
-    GroundType GetCurvedGrass(Transform tile, Vector3 playerpos)
+    static GroundType GetCurvedGrass(Transform tile, Vector3 playerpos)
     {
         Vector3 pivot = tile.GetChild(0).position;
         float dist = (playerpos.x - pivot.x) * (playerpos.x - pivot.x) + (playerpos.z - pivot.z) * (playerpos.z - pivot.z);
@@ -304,7 +304,7 @@ public class GameStateManager : MonoBehaviour
         return GroundType.Road;
     }
 
-    GroundType GetStraightTileGrass(Transform tile, Vector2 relativpos)
+    static GroundType GetStraightTileGrass(Transform tile, Vector2 relativpos)
     {
         float rotationY = tile.rotation.eulerAngles.y;
 

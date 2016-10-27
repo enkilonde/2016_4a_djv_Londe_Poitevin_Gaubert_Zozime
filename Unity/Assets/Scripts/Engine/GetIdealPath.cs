@@ -120,7 +120,7 @@ public class GetIdealPath : MonoBehaviour
         float parentTileRotation;
 
 
-        GameObject tile = levelManager.GetTileAt(parentCoord.x, parentCoord.y);
+        GameObject tile = LevelManager.GetTileAt(parentCoord.x, parentCoord.y);
         if (tile == null)
         {
             Debug.LogWarning("You try to find children, but the parent tile is unexistant ! Please put the AI on a tile.");
@@ -197,7 +197,7 @@ public class GetIdealPath : MonoBehaviour
 
     Vector3 coordinatesToPointCentered(Coordinates coord)
     {
-        GameObject tile = levelManager.GetTileAt(coord.x, coord.y);
+        GameObject tile = LevelManager.GetTileAt(coord.x, coord.y);
         if (tile != null)
         {
             return tile.transform.position;
