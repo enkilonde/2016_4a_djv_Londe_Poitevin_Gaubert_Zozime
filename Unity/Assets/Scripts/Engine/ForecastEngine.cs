@@ -85,15 +85,14 @@ public class ForecastEngine : MonoBehaviour
 
         Node startNode;
         startNode.cost = 0;
-        startNode.parentIndex = -1;
+        startNode.parentIndex = -42; // unused value, but still set a magic number...just in case...
         startNode.heuristicValue = GetHeuristicValue(ref startState, ref goalState);
         startNode.rootIndex = -1;
         startNode.state = startState;
 
         openList.Add(startNode);
 
-        int openListCount = openList.Count;
-        while (openListCount > 0 && iteration < maxIterations)
+        while (openList.Count > 0 && iteration < maxIterations) //BOUCLE WHILE
         {
             int currentNodeIndex = GetPrioritaryIndex(openList);
             Node currentNode = openList[currentNodeIndex];
@@ -101,22 +100,41 @@ public class ForecastEngine : MonoBehaviour
 
             if (currentNode.cost < maxCurrentCost - frameOffsetToIgnore)
             {
+                bool canIskip = false;
                 foreach (Node closedNode in closedList)
                 {
                     if (Vector3.SqrMagnitude(currentNode.state.AI.position - closedNode.state.AI.position) < distanceOffsetToIgnore)
                     {
-                        continue; // skip the end of the while
+                        canIskip = true;
+                        break; // skip the end of the while
                     }
                 }
+                if (canIskip) continue;
             }
 
             maxCurrentCost = Mathf.Min(maxCurrentCost, currentNode.cost + 1);
-            GenerateChildren(ref currentNode);
+
+            GenerateChildren(ref currentNode, closedList.Count);
             AddChildrenToOpenList();
 
             if (currentNode.rootIndex != -1)
             {
                 closedList.Add(currentNode);
+            }
+            else
+            {
+                // On veut que les enfants de la premiere generation soient à l'origine de la closedList.
+                for (int i = 0; i < childrenList.Length; i++)
+                {
+                    currentNodeIndex = 0;
+                    currentNode = openList[currentNodeIndex];
+                    openList.RemoveAt(currentNodeIndex);
+
+                    GenerateChildren(ref currentNode, closedList.Count);
+                    AddChildrenToOpenList();
+
+                    closedList.Add(currentNode);
+                }
             }
         }
 
@@ -127,6 +145,11 @@ public class ForecastEngine : MonoBehaviour
         tempGoalState = closedList[bestNodeIndex].state; // debug purpose
         bestNodeIndex = closedList[bestNodeIndex].rootIndex;
 
+        Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
+
+        if (closedList.Count == 0) return VehicleAction.NO_INPUT;
+
+        //Debug.Log("CloseList Taille = " + closedList.Count + " , bestNodeIndex = " + bestNodeIndex);
 
         return closedList[bestNodeIndex].state.AI.action;
     }
@@ -137,8 +160,14 @@ public class ForecastEngine : MonoBehaviour
 
         Node currentNode = node;
 
-        while (currentNode.parentIndex < childrenList.Length)
+        while (currentNode.parentIndex != -1)
         {
+            int index = closedList.FindIndex(element => element.Equals(currentNode));
+            if (index == currentNode.parentIndex)
+            {
+                Debug.Log("duh ?!");
+                break;
+            }
             hierarchy.Add(currentNode);
             currentNode = closedList[currentNode.parentIndex];
         }
@@ -175,23 +204,25 @@ public class ForecastEngine : MonoBehaviour
         }
         return prioritaryIndex;
     }
+
     private int GetFinalPrioritaryIndex()
     {
         float minValue = 999999f;
         int prioritaryIndex = 0;
 
-        float currentValue;
+
+        float currentValue = 0;
 
         for (int i = 0; i < closedList.Count; i++)
         {
             currentValue = closedList[i].heuristicValue;
             if (currentValue < minValue)
             {
+
                 minValue = currentValue;
                 prioritaryIndex = i;
             }
         }
-
         return prioritaryIndex;
     }
 
@@ -199,7 +230,7 @@ public class ForecastEngine : MonoBehaviour
     {
         /* POUR MONTRER AU PROF (1) */
         float groundFactor = 1f;
-        if (GameStateManager.isEntityInGrass(start.AI.position) == GroundType.Grass)
+        if(start.AI.ground == GroundType.Grass)
         { groundFactor = 2f; }
         return groundFactor * Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
 
@@ -207,23 +238,31 @@ public class ForecastEngine : MonoBehaviour
         //return Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
     }
 
-    private void GenerateChildren(ref Node node)
+    private void GenerateChildren(ref Node node, int nodeFutureIndex)
     {
+        //Debug.Log("root" + node.rootIndex);
         for (int i = 0; i < validActions.Length; i++)
         {
             VehicleAction action = validActions[i];
 
-            childrenList[i].parentIndex = closedList.Count;
+            /*if (isOppositeAction(action, node.state.AI.action))
+            {
+                continue;
+            }*/
+
+            /* POUR MONTRER AU PROF 2 */
             childrenList[i].cost = node.cost + i;
             childrenList[i].state = gameStateManager.ComputeGameState(node.state, action, framesPerIteration);
 
             if (node.rootIndex == -1)
             {
                 childrenList[i].rootIndex = i;
+                childrenList[i].parentIndex = -42;
             }
             else
             {
                 childrenList[i].rootIndex = node.rootIndex;
+                childrenList[i].parentIndex = nodeFutureIndex;
             }
             childrenList[i].heuristicValue = GetHeuristicValue(ref childrenList[i].state, ref goalState);
 
@@ -243,23 +282,23 @@ public class ForecastEngine : MonoBehaviour
         {
             case VehicleAction.ACCELERATE:
                 return (action2 == VehicleAction.BRAKE ||
-                        action2 == (VehicleAction.BRAKE | VehicleAction.RIGHT) ||
-                        action2 == (VehicleAction.BRAKE | VehicleAction.LEFT));
+                    action2 == (VehicleAction.BRAKE | VehicleAction.RIGHT) ||
+                    action2 == (VehicleAction.BRAKE | VehicleAction.LEFT));
                 break;
             case VehicleAction.BRAKE:
                 return (action2 == VehicleAction.ACCELERATE ||
-                        action2 == (VehicleAction.ACCELERATE | VehicleAction.RIGHT) ||
-                        action2 == (VehicleAction.ACCELERATE | VehicleAction.LEFT));
+                    action2 == (VehicleAction.ACCELERATE | VehicleAction.RIGHT) ||
+                    action2 == (VehicleAction.ACCELERATE | VehicleAction.LEFT));
                 break;
             case VehicleAction.LEFT:
                 return (action2 == VehicleAction.RIGHT ||
-                        action2 == (VehicleAction.RIGHT | VehicleAction.ACCELERATE) ||
-                        action2 == (VehicleAction.RIGHT | VehicleAction.BRAKE));
+                    action2 == (VehicleAction.RIGHT | VehicleAction.ACCELERATE) ||
+                    action2 == (VehicleAction.RIGHT | VehicleAction.BRAKE));
                 break;
             case VehicleAction.RIGHT:
                 return (action2 == VehicleAction.LEFT ||
-                        action2 == (VehicleAction.LEFT | VehicleAction.ACCELERATE) ||
-                        action2 == (VehicleAction.LEFT | VehicleAction.BRAKE));
+                    action2 == (VehicleAction.LEFT | VehicleAction.ACCELERATE) ||
+                    action2 == (VehicleAction.LEFT | VehicleAction.BRAKE));
                 break;
         }
         return false;
@@ -273,7 +312,7 @@ public class ForecastEngine : MonoBehaviour
             foreach (Node node in openList)
             {
                 Gizmos.DrawLine(gameStateManager.gameState.AI.position, node.state.AI.position);
-            }
+            } 
         }
 
         if (debugHierarchy != null)

@@ -7,6 +7,7 @@ TagManager:
   - Grass
   - Tiles
   - Wall
+  - player
   layers:
   - Default
   - TransparentFX
