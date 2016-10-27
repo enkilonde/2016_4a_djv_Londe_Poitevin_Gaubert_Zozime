@@ -38,9 +38,7 @@ public class GameStateManager : MonoBehaviour
     public float grassSlowFactor = 5;
     public float grassMaxSpeed = 0.2f;
     public float brakePower = 0.5f;
-
-
-
+    
 
     void Awake()
     {
@@ -56,6 +54,10 @@ public class GameStateManager : MonoBehaviour
 
         InitGameState();
 
+
+        GameState goalState = new GameState();
+        goalState.AI.position = destination.position;
+        forecastEngine.SetGoalState(goalState);
     }
 
     void InitGameState()
@@ -86,8 +88,8 @@ public class GameStateManager : MonoBehaviour
         ApplyPlayerNextState();
         ApplyIANextState();
 
-        ApplyPhysics(player);
-        ApplyPhysics(AI);
+        //ApplyPhysics(player);
+        //ApplyPhysics(AI);
     }
 
     void UpdateGameState()
@@ -105,10 +107,10 @@ public class GameStateManager : MonoBehaviour
 
         VehicleAction inputsSum = VehicleAction.NO_INPUT;
 
-        if (Input.GetAxisRaw("Horizontal") < 0)
+        if (Input.GetAxisRaw("Horizontal") > 0)
             inputsSum = inputsSum | VehicleAction.RIGHT;
 
-        if (Input.GetAxisRaw("Horizontal") > 0)
+        if (Input.GetAxisRaw("Horizontal") < 0)
             inputsSum = inputsSum | VehicleAction.LEFT;
 
         if (Input.GetAxisRaw("Vertical") > 0)
@@ -137,10 +139,6 @@ public class GameStateManager : MonoBehaviour
 
     void ApplyIANextState()
     {
-        GameState goalState = new GameState();
-        //goalState.AI.position = Vector3.zero;
-        goalState.AI.position = destination.position;
-        forecastEngine.SetGoalState(goalState);
         VehicleAction inputsSum = forecastEngine.getBestAction(gameState);
 
         CustomTransform _t = gameState.AI.UpdateVehicle(inputsSum, isEntityInGrass(gameState.AI.position));
@@ -156,13 +154,13 @@ public class GameStateManager : MonoBehaviour
 
     public GameState ComputeGameState(GameState state, VehicleAction action)
     {
-        state.player.UpdateVehicle(state.player.action, isEntityInGrass(state.player.position));
-        state.player.position = CollisionScript.CollisionManage(allWalls, state.player.position, 0.75f,
-            state.player.currentSpeed * (Quaternion.AngleAxis(state.player.orientation, Vector3.up) * Vector3.forward));
+        //state.player.UpdateVehicle(state.player.action, isEntityInGrass(state.player.position));
+        //state.player.position = CollisionScript.CollisionManage(allWalls, state.player.position, 0.75f,
+        //    state.player.currentSpeed * (Quaternion.AngleAxis(state.player.orientation, Vector3.up) * Vector3.forward));
 
         state.AI.UpdateVehicle(action, isEntityInGrass(state.AI.position));
-        state.AI.position = CollisionScript.CollisionManage(allWalls, state.AI.position, 0.75f,
-            state.AI.currentSpeed * (Quaternion.AngleAxis(state.AI.orientation, Vector3.up) * Vector3.forward));
+        //state.AI.position = CollisionScript.CollisionManage(allWalls, state.AI.position, 0.75f,
+        //    state.AI.currentSpeed * (Quaternion.AngleAxis(state.AI.orientation, Vector3.up) * Vector3.forward));
 
         state.AI.action = action;
 

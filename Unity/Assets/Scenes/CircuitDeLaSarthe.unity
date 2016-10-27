@@ -187,7 +187,7 @@ Prefab:
         type: 2}
       propertyPath: destination
       value: 
-      objectReference: {fileID: 525787902}
+      objectReference: {fileID: 984142096}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 583dd7b417e1a0e409adb874b69b2759, type: 2}
   m_IsPrefabParent: 0
@@ -1951,12 +1951,33 @@ MonoBehaviour:
     type: 2}
   gameStateManager: {fileID: 1951380308}
   maxIterations: 10
+--- !u!114 &1951380307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1951380305}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f60b1e4f416e2194fa96a6c5f0210e92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathPoints: []
+  levelManager: {fileID: 1951380309}
+  IAtransform: {fileID: 466020632}
+  laps: 1
 --- !u!114 &1951380308 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114000010692905458, guid: 583dd7b417e1a0e409adb874b69b2759,
     type: 2}
   m_PrefabInternal: {fileID: 90784175}
   m_Script: {fileID: 11500000, guid: 29ba849f0293d184ba981ef4629bfe84, type: 3}
+--- !u!114 &1951380309 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114000010291628596, guid: 583dd7b417e1a0e409adb874b69b2759,
+    type: 2}
+  m_PrefabInternal: {fileID: 90784175}
+  m_Script: {fileID: 11500000, guid: 00e5539819ae2b94aa4dfda9903d180d, type: 3}
 --- !u!4 &1999842577 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4000013135125048, guid: 29dc4af719ba5e04681aaf8d75d5a3b1,

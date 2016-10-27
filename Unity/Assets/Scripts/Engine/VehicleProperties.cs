@@ -57,13 +57,13 @@ public struct VehicleProperties
 
         if ((action & VehicleAction.LEFT) == VehicleAction.LEFT)
         {
-            orientationIncrement = rotationSpeed * deltaTime;
+            orientationIncrement = -rotationSpeed * deltaTime;
             speedAcceleration -= deltaTime / accelerationTime / 2;
         }
 
         if ((action & VehicleAction.RIGHT) == VehicleAction.RIGHT)
         {
-            orientationIncrement = -rotationSpeed * deltaTime;
+            orientationIncrement = rotationSpeed * deltaTime;
             speedAcceleration -= deltaTime / accelerationTime / 2;
         }
 

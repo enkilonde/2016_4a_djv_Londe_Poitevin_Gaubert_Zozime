@@ -22,9 +22,7 @@ public class ForecastEngine : MonoBehaviour
 
     private VehicleAction[] validActions =
     {
-        VehicleAction.NO_INPUT,
         VehicleAction.ACCELERATE,
-        VehicleAction.BRAKE,
         VehicleAction.LEFT,
         VehicleAction.RIGHT,
 
@@ -32,7 +30,9 @@ public class ForecastEngine : MonoBehaviour
         VehicleAction.ACCELERATE | VehicleAction.RIGHT,
 
         VehicleAction.BRAKE | VehicleAction.RIGHT,
-        VehicleAction.BRAKE | VehicleAction.LEFT
+        VehicleAction.BRAKE | VehicleAction.LEFT,
+        VehicleAction.BRAKE,
+        VehicleAction.NO_INPUT
     };
 
     public GameStateManager gameStateManager;
@@ -42,11 +42,11 @@ public class ForecastEngine : MonoBehaviour
     private Node[] childrenList;
 
     private GameState goalState;
+    private GameState tempGoalState;
 
     public int maxIterations;
     private int iteration;
-
-
+    
     public void Awake()
     {
         openList = new List<Node>(maxIterations);
@@ -65,6 +65,7 @@ public class ForecastEngine : MonoBehaviour
     public void SetGoalState(GameState state)
     {
         goalState = state;
+        tempGoalState = state;
     }
 
     public VehicleAction getBestAction(GameState startState)
@@ -86,10 +87,7 @@ public class ForecastEngine : MonoBehaviour
             openList.RemoveAt(currentNodeIndex);
 
             GenerateChildren(ref currentNode);
-            foreach (Node child in childrenList)
-            {
-                openList.Add(child);
-            }
+            AddChildrenToOpenList();
 
             if (currentNode.rootIndex != -1)
             {
@@ -103,11 +101,20 @@ public class ForecastEngine : MonoBehaviour
         }
 
         int bestNodeIndex = GetPrioritaryIndex(closedList);
+        tempGoalState = closedList[bestNodeIndex].state;
+
         bestNodeIndex = closedList[bestNodeIndex].rootIndex;
 
-        //Debug.Log("bestNodeIndex = " + bestNodeIndex + "; ClosedList count = " + closedList.Count);
-        Debug.Log(closedList[bestNodeIndex].state.AI.action);
+        //Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
         return closedList[bestNodeIndex].state.AI.action;
+    }
+
+    private void AddChildrenToOpenList()
+    {
+        foreach (Node child in childrenList)
+        {
+            openList.Add(child);
+        }
     }
 
     private int GetPrioritaryIndex(List<Node> list)
@@ -124,17 +131,12 @@ public class ForecastEngine : MonoBehaviour
                 prioritaryIndex = i;
             }
         }
-
-        //if (list == closedList) Debug.Log("prioritaryIndex = " + prioritaryIndex + "on = " + list.Count);
         return prioritaryIndex;
     }
 
     private float GetHeuristicValue(ref GameState start, ref GameState goal)
     {
-        // Faire un truc avec l'orientation
-        float orientationFactor = Vector3.Dot(start.AI.orientation)
-
-        return Vector3.SqrMagnitude((goal.AI.position - start.AI.position) / (start.AI.maxSpeed * start.AI.maxSpeed));
+        return Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (start.AI.maxSpeed * start.AI.maxSpeed);
     }
 
     private void GenerateChildren(ref Node node)
@@ -155,6 +157,25 @@ public class ForecastEngine : MonoBehaviour
             }
             childrenList[i].heuristicValue = GetHeuristicValue(ref childrenList[i].state, ref goalState);
 
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        if (openList != null)
+        {
+            Gizmos.color = Color.red;
+            foreach (Node node in openList)
+            {
+                Gizmos.DrawLine(gameStateManager.gameState.AI.position, node.state.AI.position);
+            } 
+        }
+
+        if (tempGoalState.AI.position != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(gameStateManager.gameState.AI.position, tempGoalState.AI.position);
+            Gizmos.DrawSphere(tempGoalState.AI.position, 0.3f);
         }
     }
 
