@@ -74,6 +74,8 @@ public class VehicleStaticProperties
 
         vehicleProps.position += speedIncrement * (Quaternion.AngleAxis(vehicleProps.orientation, Vector3.up) * Vector3.forward);
 
+         vehicleProps.ground = GameStateManager.isEntityInGrass(vehicleProps.position);
+
         return vehicleProps;
     }
 

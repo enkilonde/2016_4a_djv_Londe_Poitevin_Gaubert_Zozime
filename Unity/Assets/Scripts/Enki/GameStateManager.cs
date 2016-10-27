@@ -85,11 +85,11 @@ public class GameStateManager : MonoBehaviour
     {
         gameState.player.position = player.position;
         gameState.player.orientation = player.rotation.eulerAngles.y;
-        gameState.player.ground = isEntityInGrass(player.position);
+        //gameState.player.ground = isEntityInGrass(player.position);
 
         gameState.AI.position = AI.position;
         gameState.AI.orientation = AI.rotation.eulerAngles.y;
-        gameState.player.ground = isEntityInGrass(player.position);
+        //gameState.player.ground = isEntityInGrass(player.position);
     }
 
     void ApplyPlayerNextState()
@@ -173,7 +173,7 @@ public class GameStateManager : MonoBehaviour
         speedIndicator.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(42, -220, playerCurrentSpeed));
     }
 
-    static GroundType isEntityInGrass(Vector3 entityPos)
+    static public GroundType isEntityInGrass(Vector3 entityPos)
     {
         Transform tile = GetEntityTile(entityPos);
 

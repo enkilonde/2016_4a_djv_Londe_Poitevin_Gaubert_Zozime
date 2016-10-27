@@ -96,7 +96,7 @@ public class ForecastEngine : MonoBehaviour
         }
 
         int bestNodeIndex = GetPrioritaryIndex(closedList);
-        tempGoalState = closedList[bestNodeIndex].state;
+        tempGoalState = closedList[bestNodeIndex].state; // debug purpose
 
         bestNodeIndex = closedList[bestNodeIndex].rootIndex;
 
@@ -125,8 +125,8 @@ public class ForecastEngine : MonoBehaviour
         //Debug.Log(list.Count);
         for (int i = 0; i < listLenght; i++)
         {
-            Node nodeTemp = nodesList[i];
-            float currentValue = nodeTemp.GetCurrentValue(fixedTime);
+            //Node nodeTemp = nodesList[i];
+            float currentValue = nodesList[i].GetCurrentValue(fixedTime);
             
             if (currentValue < minValue)
             {
@@ -164,7 +164,7 @@ public class ForecastEngine : MonoBehaviour
         }
     }
 
-    void OnDrawGizmos()
+    void OnDrawGizmosSelected()
     {
         if (openList != null)
         {

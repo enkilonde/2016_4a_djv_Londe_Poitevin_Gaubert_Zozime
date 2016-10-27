@@ -9,7 +9,5 @@ public struct VehicleProperties
     public VehicleAction action;
     public float speedAcceleration;
     public GroundType ground;
-
-    
 }
 
