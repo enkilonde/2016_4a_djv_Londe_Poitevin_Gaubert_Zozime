@@ -8,6 +8,5 @@ public enum VehicleAction
     LEFT = 2,
     RIGHT = 4,
     BRAKE = 16,
-    USE_ITEM = 32,
     Count
 }

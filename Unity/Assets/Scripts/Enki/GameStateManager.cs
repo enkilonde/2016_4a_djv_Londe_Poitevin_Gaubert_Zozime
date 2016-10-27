@@ -22,13 +22,13 @@ public class GameStateManager : MonoBehaviour
     //internal
     public float playerCurrentSpeed
     {
-        get { return gameState.player.currentSpeed; }
-        set { gameState.player.currentSpeed = value; }
+        get { return gameState.player.speedAcceleration; }
+        set { gameState.player.speedAcceleration = value; }
     }
     public float AICurrentSpeed
     {
-        get { return gameState.AI.currentSpeed; }
-        set { gameState.AI.currentSpeed = value; }
+        get { return gameState.AI.speedAcceleration; }
+        set { gameState.AI.speedAcceleration = value; }
     }
 
     [Header("Vehicle Properties")]
@@ -62,22 +62,7 @@ public class GameStateManager : MonoBehaviour
 
     void InitGameState()
     {
-        gameState.player.rotationSpeed = rotationSpeed;
-        gameState.player.maxSpeed = maxSpeed;
-        gameState.player.accelerationTime = accelerationTime;
-        gameState.player.grassSlowFactor = grassSlowFactor;
-        gameState.player.grassMaxSpeed = grassMaxSpeed;
-        gameState.player.brakePower = brakePower;
-
-        gameState.AI.rotationSpeed = rotationSpeed;
-        gameState.AI.maxSpeed = maxSpeed;
-        gameState.AI.accelerationTime = accelerationTime;
-        gameState.AI.grassSlowFactor = grassSlowFactor;
-        gameState.AI.grassMaxSpeed = grassMaxSpeed;
-        gameState.AI.brakePower = brakePower;
-
-
-
+        VehicleStaticProperties.Reset(rotationSpeed, maxSpeed, accelerationTime, grassSlowFactor, grassMaxSpeed, brakePower);
         UpdateGameState();
     }
 
@@ -88,7 +73,7 @@ public class GameStateManager : MonoBehaviour
         ApplyPlayerNextState();
         ApplyIANextState();
 
-        //ApplyPhysics(player);
+        ApplyPhysics(player);
         //ApplyPhysics(AI);
     }
 
@@ -96,6 +81,7 @@ public class GameStateManager : MonoBehaviour
     {
         gameState.player.position = player.position;
         gameState.player.orientation = player.rotation.eulerAngles.y;
+        gameState.player.ground = isEntityInGrass(player.position);
 
         gameState.AI.position = AI.position;
         gameState.AI.orientation = AI.rotation.eulerAngles.y;
@@ -119,10 +105,10 @@ public class GameStateManager : MonoBehaviour
         if (Input.GetAxisRaw("Vertical") < 0)
             inputsSum = inputsSum | VehicleAction.BRAKE;
 
-        CustomTransform _t = gameState.player.UpdateVehicle(inputsSum, isEntityInGrass(gameState.player.position));
 
-        player.transform.position = _t.position;
-        player.transform.rotation = _t.rotation;
+        gameState.player = VehicleStaticProperties.UpdateVehicle(inputsSum, gameState.player);
+        player.transform.position = gameState.player.position;
+        player.transform.rotation = Quaternion.AngleAxis(gameState.player.orientation, Vector3.up);
 
         playerCurrentSpeed = gameState.player.speedAcceleration; // get the speed of the player
 
@@ -141,10 +127,15 @@ public class GameStateManager : MonoBehaviour
     {
         VehicleAction inputsSum = forecastEngine.getBestAction(gameState);
 
-        CustomTransform _t = gameState.AI.UpdateVehicle(inputsSum, isEntityInGrass(gameState.AI.position));
-        AI.transform.position = _t.position;
-        AI.transform.rotation = _t.rotation;
-        AICurrentSpeed = gameState.AI.speedAcceleration;
+
+        gameState.AI = VehicleStaticProperties.UpdateVehicle(inputsSum, gameState.AI);
+        AI.transform.position = gameState.AI.position;
+        AI.transform.rotation = Quaternion.AngleAxis(gameState.AI.orientation, Vector3.up);
+
+        playerCurrentSpeed = gameState.player.speedAcceleration; // get the speed of the player
+
+
+
         if (isEntityOnCheckpoint(gameState.AI.position))
         {
             bool insideRoad;
@@ -154,15 +145,8 @@ public class GameStateManager : MonoBehaviour
 
     public GameState ComputeGameState(GameState state, VehicleAction action)
     {
-        //state.player.UpdateVehicle(state.player.action, isEntityInGrass(state.player.position));
-        //state.player.position = CollisionScript.CollisionManage(allWalls, state.player.position, 0.75f,
-        //    state.player.currentSpeed * (Quaternion.AngleAxis(state.player.orientation, Vector3.up) * Vector3.forward));
 
-        state.AI.UpdateVehicle(action, isEntityInGrass(state.AI.position));
-        //state.AI.position = CollisionScript.CollisionManage(allWalls, state.AI.position, 0.75f,
-        //    state.AI.currentSpeed * (Quaternion.AngleAxis(state.AI.orientation, Vector3.up) * Vector3.forward));
-
-        state.AI.action = action;
+        state.AI = VehicleStaticProperties.UpdateVehicle(action, state.AI);
 
         return state;
     }
@@ -176,11 +160,11 @@ public class GameStateManager : MonoBehaviour
 
 
 
+
     void UpdateSpeedIndicator()
     {
         speedIndicator.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(42, -220, playerCurrentSpeed));
     }
-
 
     GroundType isEntityInGrass(Vector3 entityPos)
     {

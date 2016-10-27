@@ -105,7 +105,9 @@ public class ForecastEngine : MonoBehaviour
 
         bestNodeIndex = closedList[bestNodeIndex].rootIndex;
 
-        //Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
+        Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
+
+
         return closedList[bestNodeIndex].state.AI.action;
     }
 
@@ -121,10 +123,17 @@ public class ForecastEngine : MonoBehaviour
     {
         float minValue = float.MaxValue;
         int prioritaryIndex = 0;
+        float fixedTime = Time.fixedDeltaTime;
 
+        Node[] nodesList = list.ToArray();
+
+        //Debug.Log(list.Count);
         for (int i = 0; i < list.Count; i++)
         {
-            float currentValue = (list[i].cost * list[i].cost * Time.fixedDeltaTime * Time.fixedDeltaTime) + list[i].heuristicValue;
+            Node nodeTemp = nodesList[i];
+            //float currentValue = (list[i].cost * list[i].cost * Time.fixedDeltaTime * Time.fixedDeltaTime) + list[i].heuristicValue;
+            float currentValue = (nodeTemp.cost * nodeTemp.cost * fixedTime * fixedTime) + nodeTemp.heuristicValue;
+
             if (currentValue < minValue)
             {
                 minValue = currentValue;
@@ -136,7 +145,7 @@ public class ForecastEngine : MonoBehaviour
 
     private float GetHeuristicValue(ref GameState start, ref GameState goal)
     {
-        return Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (start.AI.maxSpeed * start.AI.maxSpeed);
+        return Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
     }
 
     private void GenerateChildren(ref Node node)
