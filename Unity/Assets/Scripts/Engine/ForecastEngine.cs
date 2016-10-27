@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UniRx.Examples;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class ForecastEngine : MonoBehaviour
 {
     public struct Node
     {
+        public int parentIndex;
         public int rootIndex;
         public int cost;
         public float heuristicValue;
@@ -44,12 +46,16 @@ public class ForecastEngine : MonoBehaviour
 
     public int maxIterations;
     private int iteration;
-    /* POUR MONTRER AU PROF 2 */
+
+
     public int framesPerIteration = 1;
     public int frameOffsetToIgnore = 20;
     public float distanceOffsetToIgnore = 0.1f;
     private int maxCurrentCost = 0;
-    
+
+
+    private List<Node> debugHierarchy;
+
     public void Awake()
     {
         gameStateManager = FindObjectOfType<GameStateManager>();
@@ -79,6 +85,7 @@ public class ForecastEngine : MonoBehaviour
 
         Node startNode;
         startNode.cost = 0;
+        startNode.parentIndex = -1;
         startNode.heuristicValue = GetHeuristicValue(ref startState, ref goalState);
         startNode.rootIndex = -1;
         startNode.state = startState;
@@ -101,9 +108,9 @@ public class ForecastEngine : MonoBehaviour
                         continue; // skip the end of the while
                     }
                 }
-            } 
+            }
 
-                maxCurrentCost = Mathf.Min(maxCurrentCost, currentNode.cost + 1);
+            maxCurrentCost = Mathf.Min(maxCurrentCost, currentNode.cost + 1);
             GenerateChildren(ref currentNode);
             AddChildrenToOpenList();
 
@@ -113,16 +120,30 @@ public class ForecastEngine : MonoBehaviour
             }
         }
 
-        //int bestNodeIndex = GetPrioritaryIndex(closedList);
         int bestNodeIndex = GetFinalPrioritaryIndex();
+
+        debugHierarchy = findNodeHierarchy(closedList[bestNodeIndex]);
+
         tempGoalState = closedList[bestNodeIndex].state; // debug purpose
-
         bestNodeIndex = closedList[bestNodeIndex].rootIndex;
-
-        Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
 
 
         return closedList[bestNodeIndex].state.AI.action;
+    }
+
+    private List<Node> findNodeHierarchy(Node node)
+    {
+        List<Node> hierarchy = new List<Node>();
+
+        Node currentNode = node;
+
+        while (currentNode.parentIndex < childrenList.Length)
+        {
+            hierarchy.Add(currentNode);
+            currentNode = closedList[currentNode.parentIndex];
+        }
+
+        return hierarchy;
     }
 
     private void AddChildrenToOpenList()
@@ -181,7 +202,7 @@ public class ForecastEngine : MonoBehaviour
         if (GameStateManager.isEntityInGrass(start.AI.position) == GroundType.Grass)
         { groundFactor = 2f; }
         return groundFactor * Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
-        
+
 
         //return Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
     }
@@ -192,18 +213,10 @@ public class ForecastEngine : MonoBehaviour
         {
             VehicleAction action = validActions[i];
 
-            /*if (isOppositeAction(action, node.state.AI.action))
-            {
-                continue;
-            }*/
-
-            /* POUR MONTRER AU PROF 2 */
+            childrenList[i].parentIndex = closedList.Count;
             childrenList[i].cost = node.cost + i;
             childrenList[i].state = gameStateManager.ComputeGameState(node.state, action, framesPerIteration);
 
-            /*childrenList[i].cost = node.cost + 1;
-            childrenList[i].state = gameStateManager.ComputeGameState(node.state, action);*/
-            
             if (node.rootIndex == -1)
             {
                 childrenList[i].rootIndex = i;
@@ -230,23 +243,23 @@ public class ForecastEngine : MonoBehaviour
         {
             case VehicleAction.ACCELERATE:
                 return (action2 == VehicleAction.BRAKE ||
-                    action2 == (VehicleAction.BRAKE | VehicleAction.RIGHT) ||
-                    action2 == (VehicleAction.BRAKE | VehicleAction.LEFT));
+                        action2 == (VehicleAction.BRAKE | VehicleAction.RIGHT) ||
+                        action2 == (VehicleAction.BRAKE | VehicleAction.LEFT));
                 break;
             case VehicleAction.BRAKE:
                 return (action2 == VehicleAction.ACCELERATE ||
-                    action2 == (VehicleAction.ACCELERATE | VehicleAction.RIGHT) ||
-                    action2 == (VehicleAction.ACCELERATE | VehicleAction.LEFT));
+                        action2 == (VehicleAction.ACCELERATE | VehicleAction.RIGHT) ||
+                        action2 == (VehicleAction.ACCELERATE | VehicleAction.LEFT));
                 break;
             case VehicleAction.LEFT:
                 return (action2 == VehicleAction.RIGHT ||
-                    action2 == (VehicleAction.RIGHT | VehicleAction.ACCELERATE) ||
-                    action2 == (VehicleAction.RIGHT | VehicleAction.BRAKE));
+                        action2 == (VehicleAction.RIGHT | VehicleAction.ACCELERATE) ||
+                        action2 == (VehicleAction.RIGHT | VehicleAction.BRAKE));
                 break;
             case VehicleAction.RIGHT:
                 return (action2 == VehicleAction.LEFT ||
-                    action2 == (VehicleAction.LEFT | VehicleAction.ACCELERATE) ||
-                    action2 == (VehicleAction.LEFT | VehicleAction.BRAKE));
+                        action2 == (VehicleAction.LEFT | VehicleAction.ACCELERATE) ||
+                        action2 == (VehicleAction.LEFT | VehicleAction.BRAKE));
                 break;
         }
         return false;
@@ -260,7 +273,17 @@ public class ForecastEngine : MonoBehaviour
             foreach (Node node in openList)
             {
                 Gizmos.DrawLine(gameStateManager.gameState.AI.position, node.state.AI.position);
-            } 
+            }
+        }
+
+        if (debugHierarchy != null)
+        {
+            Gizmos.color = Color.green;
+            for (int i = 0; i < debugHierarchy.Count - 1; i++)
+            {
+                Gizmos.DrawSphere(debugHierarchy[i].state.AI.position, 03f);
+                Gizmos.DrawLine(debugHierarchy[i].state.AI.position, debugHierarchy[i + 1].state.AI.position);
+            }
         }
 
         if (tempGoalState.AI.position != null)
