@@ -58,6 +58,7 @@ public class GameStateManager : MonoBehaviour
         GameState goalState = new GameState();
         goalState.AI.position = destination.position;
         forecastEngine.SetGoalState(goalState);
+
     }
 
     void InitGameState()
@@ -105,6 +106,7 @@ public class GameStateManager : MonoBehaviour
         if (Input.GetAxisRaw("Vertical") < 0)
             inputsSum = inputsSum | VehicleAction.BRAKE;
 
+        gameState.player.action = inputsSum;
 
         gameState.player = VehicleStaticProperties.UpdateVehicle(inputsSum, gameState.player);
         player.transform.position = gameState.player.position;

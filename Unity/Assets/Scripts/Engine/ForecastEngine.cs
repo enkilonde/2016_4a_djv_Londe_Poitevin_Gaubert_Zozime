@@ -18,6 +18,13 @@ public class ForecastEngine : MonoBehaviour
         public int cost;
         public float heuristicValue;
         public GameState state;
+        //float currentValue = (nodeTemp.cost * nodeTemp.cost * fixedTime * fixedTime) + nodeTemp.heuristicValue;
+        public float GetCurrentValue(float fixedTime)
+        {
+            
+            return (cost * cost * fixedTime * fixedTime) + heuristicValue;
+        }
+
     }
 
     private VehicleAction[] validActions =
@@ -105,7 +112,7 @@ public class ForecastEngine : MonoBehaviour
 
         bestNodeIndex = closedList[bestNodeIndex].rootIndex;
 
-        Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
+        //Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
 
 
         return closedList[bestNodeIndex].state.AI.action;
@@ -121,7 +128,7 @@ public class ForecastEngine : MonoBehaviour
 
     private int GetPrioritaryIndex(List<Node> list)
     {
-        float minValue = float.MaxValue;
+        float minValue = 999999;
         int prioritaryIndex = 0;
         float fixedTime = Time.fixedDeltaTime;
 
@@ -132,7 +139,10 @@ public class ForecastEngine : MonoBehaviour
         {
             Node nodeTemp = nodesList[i];
             //float currentValue = (list[i].cost * list[i].cost * Time.fixedDeltaTime * Time.fixedDeltaTime) + list[i].heuristicValue;
-            float currentValue = (nodeTemp.cost * nodeTemp.cost * fixedTime * fixedTime) + nodeTemp.heuristicValue;
+            //float currentValue = (nodeTemp.cost * nodeTemp.cost * fixedTime * fixedTime) + nodeTemp.heuristicValue;
+            float currentValue = nodeTemp.GetCurrentValue(fixedTime);
+            
+
 
             if (currentValue < minValue)
             {
