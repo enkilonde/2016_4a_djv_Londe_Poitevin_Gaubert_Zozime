@@ -18,12 +18,13 @@ public class GetIdealPath : MonoBehaviour
 
     public List<Vector3> pathPoints = new List<Vector3>();
 
-    public LevelManager levelManager;
+    LevelManager levelManager;
     public Transform IAtransform;
     public int laps;
 
     void Start()
     {
+        levelManager = GetComponent<LevelManager>();
         pathPoints = CalculatePath(IAtransform.position, levelManager.checkpoints);
     }
 

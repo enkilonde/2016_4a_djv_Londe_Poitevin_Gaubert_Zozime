@@ -4,14 +4,6 @@ using UnityEngine;
 
 public class ForecastEngine : MonoBehaviour
 {
-    public GameObject sphereDebugPrefab;
-    void SpawnSpherePrefab(Vector3 position, Vector3 target)
-    {
-        GameObject newSphere = (GameObject)GameObject.Instantiate(sphereDebugPrefab);
-        newSphere.transform.position = position;
-        newSphere.transform.localScale = new Vector3(0.01f, 2f / Vector3.Distance(target, position), 0.01f);
-    }
-
     public struct Node
     {
         public int rootIndex;
@@ -42,7 +34,7 @@ public class ForecastEngine : MonoBehaviour
         VehicleAction.NO_INPUT
     };
 
-    public GameStateManager gameStateManager;
+    GameStateManager gameStateManager;
 
     private List<Node> openList;
     private List<Node> closedList;
@@ -56,6 +48,8 @@ public class ForecastEngine : MonoBehaviour
     
     public void Awake()
     {
+        gameStateManager = FindObjectOfType<GameStateManager>();
+
         openList = new List<Node>(maxIterations + 9);
         closedList = new List<Node>(maxIterations + 9);
         childrenList = new Node[validActions.Length];

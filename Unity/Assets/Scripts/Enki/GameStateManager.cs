@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum GroundType { Road, Grass, Wall}
+public enum GroundType { Road, Grass, Wall }
 
 public class GameStateManager : MonoBehaviour
 {
@@ -10,13 +10,13 @@ public class GameStateManager : MonoBehaviour
     public Transform player;
     public Transform AI;
     public Transform speedIndicator;
-    public ForecastEngine forecastEngine;
 
     public Transform destination;
 
     //Private refs
     LevelManager levelManagerScript;
     PauseManager pauseManagerScript;
+    ForecastEngine forecastEngine;
     Transform[] allWalls;
 
     //internal
@@ -38,13 +38,17 @@ public class GameStateManager : MonoBehaviour
     public float grassSlowFactor = 5;
     public float grassMaxSpeed = 0.2f;
     public float brakePower = 0.5f;
-    
+
 
     void Awake()
     {
-        levelManagerScript = FindObjectOfType<LevelManager>();
-        pauseManagerScript = FindObjectOfType<PauseManager>();
+        levelManagerScript = GetComponent<LevelManager>();
+        pauseManagerScript = GetComponent<PauseManager>();
+        forecastEngine = GetComponent<ForecastEngine>();
+    }
 
+    void Start()
+    {
         GameObject[] WallsTemp = GameObject.FindGameObjectsWithTag("Wall");
         allWalls = new Transform[WallsTemp.Length];
         for (int i = 0; i < WallsTemp.Length; i++)
@@ -58,7 +62,6 @@ public class GameStateManager : MonoBehaviour
         GameState goalState = new GameState();
         goalState.AI.position = destination.position;
         forecastEngine.SetGoalState(goalState);
-
     }
 
     void InitGameState()
@@ -86,7 +89,6 @@ public class GameStateManager : MonoBehaviour
 
         gameState.AI.position = AI.position;
         gameState.AI.orientation = AI.rotation.eulerAngles.y;
-        //gameState.player.ground = isEntityInGrass(player.position);
 
     }
 
@@ -118,8 +120,7 @@ public class GameStateManager : MonoBehaviour
 
         if (isEntityOnCheckpoint(gameState.player.position))
         {
-            bool insideRoad;
-            levelManagerScript.PassCheckpoint(GetEntityTile(gameState.player.position, out insideRoad));
+            levelManagerScript.PassCheckpoint(GetEntityTile(gameState.player.position));
         }
 
         UpdateSpeedIndicator();
@@ -141,8 +142,7 @@ public class GameStateManager : MonoBehaviour
 
         if (isEntityOnCheckpoint(gameState.AI.position))
         {
-            bool insideRoad;
-            levelManagerScript.PassCheckpoint(GetEntityTile(gameState.AI.position, out insideRoad));
+            levelManagerScript.PassCheckpoint(GetEntityTile(gameState.AI.position));
         }
     }
 
@@ -150,7 +150,6 @@ public class GameStateManager : MonoBehaviour
     {
 
         state.AI = VehicleStaticProperties.UpdateVehicle(action, state.AI);
-        state.AI.ground = isEntityInGrass(state.AI.position);
 
         return state;
     }
@@ -180,7 +179,7 @@ public class GameStateManager : MonoBehaviour
 
         if (tile == null)
         {
-            return GroundType.Wall;
+            return GroundType.Grass;
         }
 
         Vector2 relativePos = GetPosInTile(entityPos, tile.position);
@@ -203,8 +202,11 @@ public class GameStateManager : MonoBehaviour
 
     bool isEntityOnCheckpoint(Vector3 entityPos)
     {
-        bool insideRoad;
-        Transform tile = GetEntityTile(entityPos, out insideRoad);
+        Transform tile = GetEntityTile(entityPos);
+
+        // Not a tile ? So we're not in a checkpoint
+        if (tile == null)
+            return false;
 
         Vector2 relativePos = GetPosInTile(entityPos, tile.position);
 
@@ -219,25 +221,28 @@ public class GameStateManager : MonoBehaviour
         return false;
     }
 
-    Transform GetEntityTile(Vector3 entityPos, out bool insideRoad) // à opti quand l'IA ne passera plus au travers des murs
+    Transform GetEntityTile(Vector3 entityPos)
     {
-        try
+
+
+        int x = (int)entityPos.x / 10;
+        int y = (int)entityPos.z / 10;
+
+        // Out of level bounds
+        if (x < 0 || x > levelManagerScript.levelWidth - 1 || y < 0 || y > levelManagerScript.levelHeight - 1)
         {
-            insideRoad = true;
-            return levelManagerScript.tiles[(int)entityPos.x / 10, (int)entityPos.z / 10].transform;
+            return null;
         }
-        catch
-        {
-            insideRoad = false;
-            for (int i = 0; i < levelManagerScript.tiles.GetLength(0); i++)
-            {
-                for (int j = 0; j < levelManagerScript.tiles.GetLength(1); j++)
-                {
-                    if (levelManagerScript.tiles[i, j]) return levelManagerScript.tiles[i, j].transform;
-                }
-            }
-        }
-        insideRoad = false;
+
+
+        // We get our game object
+        GameObject go = levelManagerScript.GetTileAt((int)entityPos.x / 10, (int)entityPos.z / 10);
+
+        // Isn't null ? We return the transform
+        if (go != null)
+            return go.transform;
+
+        // Otherwise we return null
         return null;
     }
 

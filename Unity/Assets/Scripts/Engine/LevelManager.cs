@@ -33,10 +33,12 @@ public class LevelManager : MonoBehaviour
     public Text LapsUICounter;
     public Text CheckpointsUICounter;
 
-    public PauseManager pauseManager;
+    PauseManager pauseManager;
 
     void Awake()
     {
+        pauseManager = GetComponent<PauseManager>();
+
         tiles = new GameObject[levelWidth * levelHeight];
         GameObject[] tilesTemp = GameObject.FindGameObjectsWithTag("Tiles");
 
