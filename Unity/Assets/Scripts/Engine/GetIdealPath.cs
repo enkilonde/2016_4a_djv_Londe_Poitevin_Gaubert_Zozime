@@ -31,14 +31,23 @@ public class GetIdealPath : MonoBehaviour
     {
         List<Vector3> idealLap = new List<Vector3>(10 * checkPoints.Length);
         List<Vector3> idealPath = new List<Vector3>(10 * checkPoints.Length * laps);
+        
+        //Debug.Log("Compute start to 0"); // OK
+        idealPath.AddRange(CalculatePathBetween2Position(startPosition, checkPoints[0].position));
+        //Debug.Log("Compute 0 to 1"); // OK
+        idealPath.AddRange(CalculatePathBetween2Position(checkPoints[0].position, checkPoints[1].position));
+        //Debug.Log("Compute 1 to 2"); // OK
+        idealPath.AddRange(CalculatePathBetween2Position(checkPoints[1].position, checkPoints[2].position));
+        //Debug.Log("Compute 2 to finish"); // OK
+        idealPath.AddRange(CalculatePathBetween2Position(checkPoints[2].position, checkPoints[3].position));
 
-        idealPath.AddRange(CalculatePathBetween2Position(startPosition, checkPoints[0].position)); // start to first CP
-
+        /*idealPath.AddRange(CalculatePathBetween2Position(startPosition, checkPoints[0].position)); // start to first CP
+        
         for (int i = 1; i < checkPoints.Length; i++)
         {
             idealLap.AddRange(CalculatePathBetween2Position(checkPoints[i-1].position, checkPoints[i].position));
         }
-
+        
         idealPath.AddRange(idealLap); // start to 1 lap
 
         for (int i = 1; i < laps; i++)
@@ -46,7 +55,7 @@ public class GetIdealPath : MonoBehaviour
             idealPath.AddRange(CalculatePathBetween2Position(checkPoints[checkPoints.Length-1].position, checkPoints[0].position)); // start to 1 lap & 1 CP
             idealPath.AddRange(idealLap); // start to N lap
         }
-
+        */
         return idealPath;
     }
 
@@ -77,7 +86,7 @@ public class GetIdealPath : MonoBehaviour
             {
                 if (Coordinates.areEqual(childCoord, targetCoordinates))
                 {
-                    pathsList[0].Add(coordinatesToPoint(childCoord));
+                    //pathsList[0].Add(coordinatesToPointCentered(childCoord));
                     return pathsList[0];
                 }
 
@@ -91,7 +100,7 @@ public class GetIdealPath : MonoBehaviour
                 if (isChildOK)
                 {
                     List<Vector3> newPath = new List<Vector3>(pathsList[0]);
-                    newPath.Add(coordinatesToPoint(childCoord));
+                    newPath.Add(coordinatesToPointCentered(childCoord));
                     pathsList.Add(newPath);
                 }
             }
@@ -116,7 +125,7 @@ public class GetIdealPath : MonoBehaviour
         }
         catch
         {
-            Debug.LogWarning("You try to find children, but the parent tile is unexistant ! Please put the players on a tile.");
+            Debug.LogWarning("You try to find children, but the parent tile is unexistant ! Please put the AI on a tile.");
             return validChildsCoortinates;
         }
         
@@ -141,7 +150,7 @@ public class GetIdealPath : MonoBehaviour
         if (isTheTileAtOffsetIsConnected(parentTileName, parentTileRotation, 0, -1))
         {
             Coordinates childCoord4;
-            childCoord4.x = parentCoord.x + 1; childCoord4.y = parentCoord.y - 1;
+            childCoord4.x = parentCoord.x; childCoord4.y = parentCoord.y - 1;
             validChildsCoortinates.Add(childCoord4);
         }
 
@@ -167,7 +176,7 @@ public class GetIdealPath : MonoBehaviour
                 }
                 else if (Mathf.Abs(Mathf.Abs(parentTileRotation) - 270) < 1)
                 {
-                    if (yOffset == 1 || xOffset == 1) return true;
+                    if (yOffset == 1 || xOffset == -1) return true;
                 }
                 break;
 
@@ -183,6 +192,14 @@ public class GetIdealPath : MonoBehaviour
                 break;
         }
         return false;
+    }
+
+    Vector3 coordinatesToPointCentered(Coordinates coord)
+    {
+        if (levelManager.tiles[coord.x, coord.y] != null)
+            return levelManager.tiles[coord.x, coord.y].transform.position;
+        else
+            return new Vector3(coord.x * 10f, 0f, coord.y * 10f);
     }
 
     Vector3 coordinatesToPoint(Coordinates coord)
