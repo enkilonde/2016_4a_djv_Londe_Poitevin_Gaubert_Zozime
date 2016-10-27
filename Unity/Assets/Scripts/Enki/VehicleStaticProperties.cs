@@ -28,9 +28,8 @@ public class VehicleStaticProperties
 
     public static VehicleProperties UpdateVehicle(VehicleAction action, VehicleProperties vehicleProps)
     {
-        //VehicleAction action = vehicleProps.action;
-
-
+        vehicleProps.action = action;
+        
         float deltaTime = Time.fixedDeltaTime;
 
         float orientationIncrement = 0.0f;
