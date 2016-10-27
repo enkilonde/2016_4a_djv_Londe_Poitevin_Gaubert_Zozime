@@ -82,7 +82,7 @@ public class GameStateManager : MonoBehaviour
     }
 
 
-    void Update()
+    void FixedUpdate()
     {
         if (pauseManagerScript.paused) return;
         ApplyPlayerNextState();
