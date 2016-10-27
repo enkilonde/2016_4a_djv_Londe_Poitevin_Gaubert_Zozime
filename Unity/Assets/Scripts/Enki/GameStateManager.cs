@@ -148,8 +148,13 @@ public class GameStateManager : MonoBehaviour
 
     public GameState ComputeGameState(GameState state, VehicleAction action)
     {
-
         state.AI = VehicleStaticProperties.UpdateVehicle(action, state.AI);
+
+        return state;
+    }
+    public GameState ComputeGameState(GameState state, VehicleAction action, int steps)
+    {
+        state.AI = VehicleStaticProperties.UpdateVehicle(action, state.AI, steps);
 
         return state;
     }

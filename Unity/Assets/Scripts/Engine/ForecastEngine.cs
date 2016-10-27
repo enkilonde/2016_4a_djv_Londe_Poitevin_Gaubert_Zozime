@@ -44,6 +44,11 @@ public class ForecastEngine : MonoBehaviour
 
     public int maxIterations;
     private int iteration;
+    /* POUR MONTRER AU PROF 2 */
+    public int framesPerIteration = 1;
+    public int frameOffsetToIgnore = 20;
+    public float distanceOffsetToIgnore = 0.1f;
+    private int maxCurrentCost = 0;
     
     public void Awake()
     {
@@ -86,6 +91,18 @@ public class ForecastEngine : MonoBehaviour
             Node currentNode = openList[currentNodeIndex];
             openList.RemoveAt(currentNodeIndex);
 
+            if (currentNode.cost < maxCurrentCost - frameOffsetToIgnore)
+            {
+                foreach (Node closedNode in closedList)
+                {
+                    if (Vector3.SqrMagnitude(currentNode.state.AI.position - closedNode.state.AI.position) < distanceOffsetToIgnore)
+                    {
+                        continue; // skip the end of the while
+                    }
+                }
+            } 
+
+                maxCurrentCost = Mathf.Min(maxCurrentCost, currentNode.cost + 1);
             GenerateChildren(ref currentNode);
             AddChildrenToOpenList();
 
@@ -95,12 +112,13 @@ public class ForecastEngine : MonoBehaviour
             }
         }
 
-        int bestNodeIndex = GetPrioritaryIndex(closedList);
+        //int bestNodeIndex = GetPrioritaryIndex(closedList);
+        int bestNodeIndex = GetFinalPrioritaryIndex();
         tempGoalState = closedList[bestNodeIndex].state; // debug purpose
 
         bestNodeIndex = closedList[bestNodeIndex].rootIndex;
 
-        //Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
+        Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
 
 
         return closedList[bestNodeIndex].state.AI.action;
@@ -136,10 +154,36 @@ public class ForecastEngine : MonoBehaviour
         }
         return prioritaryIndex;
     }
+    private int GetFinalPrioritaryIndex()
+    {
+        float minValue = 999999f;
+        int prioritaryIndex = 0;
+
+        float currentValue;
+
+        for (int i = 0; i < closedList.Count; i++)
+        {
+            currentValue = closedList[i].heuristicValue;
+            if (currentValue < minValue)
+            {
+                minValue = currentValue;
+                prioritaryIndex = i;
+            }
+        }
+
+        return prioritaryIndex;
+    }
 
     private float GetHeuristicValue(ref GameState start, ref GameState goal)
     {
-        return Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
+        /* POUR MONTRER AU PROF (1) */
+        float groundFactor = 1f;
+        if (GameStateManager.isEntityInGrass(start.AI.position) == GroundType.Grass)
+        { groundFactor = 2f; }
+        return groundFactor * Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
+        
+
+        //return Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
     }
 
     private void GenerateChildren(ref Node node)
@@ -147,8 +191,18 @@ public class ForecastEngine : MonoBehaviour
         for (int i = 0; i < validActions.Length; i++)
         {
             VehicleAction action = validActions[i];
-            childrenList[i].cost = node.cost + 1;
-            childrenList[i].state = gameStateManager.ComputeGameState(node.state, action);
+
+            /*if (isOppositeAction(action, node.state.AI.action))
+            {
+                continue;
+            }*/
+
+            /* POUR MONTRER AU PROF 2 */
+            childrenList[i].cost = node.cost + i;
+            childrenList[i].state = gameStateManager.ComputeGameState(node.state, action, framesPerIteration);
+
+            /*childrenList[i].cost = node.cost + 1;
+            childrenList[i].state = gameStateManager.ComputeGameState(node.state, action);*/
             
             if (node.rootIndex == -1)
             {
@@ -162,6 +216,40 @@ public class ForecastEngine : MonoBehaviour
 
             iteration++;
         }
+    }
+
+    /// <summary>
+    /// Totally Ineffective funtion
+    /// </summary>
+    /// <param name="action1"></param>
+    /// <param name="action2"></param>
+    /// <returns></returns>
+    bool isOppositeAction(VehicleAction action1, VehicleAction action2)
+    {
+        switch (action1)
+        {
+            case VehicleAction.ACCELERATE:
+                return (action2 == VehicleAction.BRAKE ||
+                    action2 == (VehicleAction.BRAKE | VehicleAction.RIGHT) ||
+                    action2 == (VehicleAction.BRAKE | VehicleAction.LEFT));
+                break;
+            case VehicleAction.BRAKE:
+                return (action2 == VehicleAction.ACCELERATE ||
+                    action2 == (VehicleAction.ACCELERATE | VehicleAction.RIGHT) ||
+                    action2 == (VehicleAction.ACCELERATE | VehicleAction.LEFT));
+                break;
+            case VehicleAction.LEFT:
+                return (action2 == VehicleAction.RIGHT ||
+                    action2 == (VehicleAction.RIGHT | VehicleAction.ACCELERATE) ||
+                    action2 == (VehicleAction.RIGHT | VehicleAction.BRAKE));
+                break;
+            case VehicleAction.RIGHT:
+                return (action2 == VehicleAction.LEFT ||
+                    action2 == (VehicleAction.LEFT | VehicleAction.ACCELERATE) ||
+                    action2 == (VehicleAction.LEFT | VehicleAction.BRAKE));
+                break;
+        }
+        return false;
     }
 
     void OnDrawGizmosSelected()

@@ -6880,7 +6880,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameStateManager: {fileID: 1951380308}
-  maxIterations: 100
+  maxIterations: 1000
+  framesPerIteration: 10
+  frameOffsetToIgnore: 11
+  distanceOffsetToIgnore: 0.001
 --- !u!1 &1973736698
 GameObject:
   m_ObjectHideFlags: 0
