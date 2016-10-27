@@ -118,16 +118,16 @@ public class GetIdealPath : MonoBehaviour
         string parentTileName;
         float parentTileRotation;
 
-        try
-        {
-            parentTileName = levelManager.tiles[parentCoord.x, parentCoord.y].name;
-            parentTileRotation = levelManager.tiles[parentCoord.x, parentCoord.y].transform.rotation.eulerAngles.y;
-        }
-        catch
+
+        GameObject tile = levelManager.GetTileAt(parentCoord.x, parentCoord.y);
+        if (tile == null)
         {
             Debug.LogWarning("You try to find children, but the parent tile is unexistant ! Please put the AI on a tile.");
             return validChildsCoortinates;
         }
+
+        parentTileName = tile.name;
+        parentTileRotation = tile.transform.rotation.eulerAngles.y;
         
         if (isTheTileAtOffsetIsConnected(parentTileName, parentTileRotation, 1, 0))
         {
@@ -196,10 +196,13 @@ public class GetIdealPath : MonoBehaviour
 
     Vector3 coordinatesToPointCentered(Coordinates coord)
     {
-        if (levelManager.tiles[coord.x, coord.y] != null)
-            return levelManager.tiles[coord.x, coord.y].transform.position;
-        else
-            return new Vector3(coord.x * 10f, 0f, coord.y * 10f);
+        GameObject tile = levelManager.GetTileAt(coord.x, coord.y);
+        if (tile != null)
+        {
+            return tile.transform.position;
+        }
+
+        return new Vector3(coord.x * 10f, 0f, coord.y * 10f);
     }
 
     Vector3 coordinatesToPoint(Coordinates coord)

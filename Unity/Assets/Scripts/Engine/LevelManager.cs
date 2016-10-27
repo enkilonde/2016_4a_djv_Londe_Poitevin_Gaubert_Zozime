@@ -6,7 +6,9 @@ public class LevelManager : MonoBehaviour
     /**
         Structure de la piste
     **/
-    public GameObject[,] tiles = new GameObject[500, 500];
+    public int levelWidth = 500;
+    public int levelHeight = 500;
+    private GameObject[] tiles;
 
 
     /**
@@ -35,11 +37,12 @@ public class LevelManager : MonoBehaviour
 
     void Awake()
     {
+        tiles = new GameObject[levelWidth * levelHeight];
         GameObject[] tilesTemp = GameObject.FindGameObjectsWithTag("Tiles");
 
         for (int i = 0; i < tilesTemp.Length; i++)
         {
-            tiles[(int)tilesTemp[i].transform.position.x / 10, (int)tilesTemp[i].transform.position.z / 10] = tilesTemp[i];
+            SetTileAt((int)tilesTemp[i].transform.position.x / 10, (int)tilesTemp[i].transform.position.z / 10, tilesTemp[i]);
             //Debug.Log("Tile (" + (int)tilesTemp[i].transform.position.x / 10 + ", " + (int)tilesTemp[i].transform.position.z / 10 + ") registered");
         }
 
@@ -48,9 +51,25 @@ public class LevelManager : MonoBehaviour
         CheckpointsUICounter.text = "Checkpoints : " + playerCheckpointCount % checkpoints.Length + " / " + (checkpoints.Length - 1);
     }
 
+    public GameObject GetTileAt(int x, int y)
+    {
+        return tiles[y * levelHeight + x];
+    }
+
+    public void SetTileAt(int x, int y, GameObject go)
+    {
+        tiles[y * levelHeight + x] = go;
+    }
+
 
     public void PassCheckpoint(Transform checkpointTransform, bool isIA = false)
     {
+        if (checkpointTransform == null)
+        {
+            Debug.LogError("Passcheckpoint received a null transform !");
+            return;
+        }
+
         if (isIA)
         {
             if (checkpoints[AICheckpointCount % checkpoints.Length] == checkpointTransform)
