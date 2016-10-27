@@ -149,14 +149,18 @@ public class GameStateManager : MonoBehaviour
     {
 
         state.AI = VehicleStaticProperties.UpdateVehicle(action, state.AI);
-
+        
         return state;
     }
 
     void ApplyPhysics(Transform entity)
     {
         Vector3 collResult = CollisionScript.CollisionManage(allWalls, entity.position, 0.75f, entity.forward * playerCurrentSpeed);
-        if (collResult != Vector3.zero) entity.position = collResult;
+        if (entity.position != collResult)
+        {
+            // collision 
+            entity.position = collResult;
+        }
         UpdateGameState();
     }
 
