@@ -106,7 +106,7 @@ public class GameStateManager : MonoBehaviour
         if (Input.GetAxisRaw("Vertical") > 0)
             inputsSum = inputsSum | VehicleAction.ACCELERATE;
 
-        if (Input.GetAxisRaw("Vertical") < 0)
+        if (Input.GetAxisRaw("Vertical") < 0 || Input.GetKey(KeyCode.Space))
             inputsSum = inputsSum | VehicleAction.BRAKE;
 
         gameState.player.action = inputsSum;

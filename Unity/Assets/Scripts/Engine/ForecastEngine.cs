@@ -85,7 +85,8 @@ public class ForecastEngine : MonoBehaviour
 
         openList.Add(startNode);
 
-        while (openList.Count > 0 && iteration < maxIterations)
+        int openListCount = openList.Count;
+        while (openListCount > 0 && iteration < maxIterations)
         {
             int currentNodeIndex = GetPrioritaryIndex(openList);
             Node currentNode = openList[currentNodeIndex];
@@ -126,9 +127,10 @@ public class ForecastEngine : MonoBehaviour
 
     private void AddChildrenToOpenList()
     {
-        foreach (Node child in childrenList)
+        int _l = childrenList.Length;
+        for (int i = 0; i < _l; i++)
         {
-            if (child.state.AI.ground != GroundType.Wall) { openList.Add(child); }
+            if (childrenList[i].state.AI.ground != GroundType.Wall) openList.Add(childrenList[i]);
         }
     }
 
@@ -140,15 +142,13 @@ public class ForecastEngine : MonoBehaviour
 
         Node[] nodesList = list.ToArray();
         int listLenght = nodesList.Length;
-        //Debug.Log(list.Count);
+
         for (int i = 0; i < listLenght; i++)
         {
-            //Node nodeTemp = nodesList[i];
-            float currentValue = nodesList[i].GetCurrentValue(fixedTime);
-            
-            if (currentValue < minValue)
+
+            if (nodesList[i].GetCurrentValue(fixedTime) < minValue)
             {
-                minValue = currentValue;
+                minValue = nodesList[i].GetCurrentValue(fixedTime);
                 prioritaryIndex = i;
             }
         }
