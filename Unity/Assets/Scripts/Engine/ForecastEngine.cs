@@ -85,8 +85,7 @@ public class ForecastEngine : MonoBehaviour
 
         openList.Add(startNode);
 
-        int openListCount = openList.Count;
-        while (openListCount > 0 && iteration < maxIterations)
+        while (openList.Count > 0 && iteration < maxIterations) //BOUCLE WHILE
         {
             int currentNodeIndex = GetPrioritaryIndex(openList);
             Node currentNode = openList[currentNodeIndex];
@@ -94,33 +93,59 @@ public class ForecastEngine : MonoBehaviour
 
             if (currentNode.cost < maxCurrentCost - frameOffsetToIgnore)
             {
+                bool canIskip = false;
                 foreach (Node closedNode in closedList)
                 {
                     if (Vector3.SqrMagnitude(currentNode.state.AI.position - closedNode.state.AI.position) < distanceOffsetToIgnore)
                     {
-                        continue; // skip the end of the while
+                        canIskip = true;
+                        break; // skip the end of the while
                     }
                 }
+                if (canIskip) continue;
             } 
 
-                maxCurrentCost = Mathf.Min(maxCurrentCost, currentNode.cost + 1);
+            maxCurrentCost = Mathf.Min(maxCurrentCost, currentNode.cost + 1);
             GenerateChildren(ref currentNode);
             AddChildrenToOpenList();
 
+            //Debug.Log("current node rootidx" + currentNode.rootIndex);
+
             if (currentNode.rootIndex != -1)
             {
+                //Debug.Log("Added in closelist");
                 closedList.Add(currentNode);
+            }
+            else
+            {
+                // On veut que les enfants de la premiere generation soient à l'origine de la closedList.
+                for (int i = 0; i < childrenList.Length; i++)
+                {
+                    currentNodeIndex = 0;
+                    currentNode = openList[currentNodeIndex];
+                    openList.RemoveAt(currentNodeIndex);
+
+                    GenerateChildren(ref currentNode);
+                    AddChildrenToOpenList();
+
+                    closedList.Add(currentNode);
+                }
             }
         }
 
         //int bestNodeIndex = GetPrioritaryIndex(closedList);
         int bestNodeIndex = GetFinalPrioritaryIndex();
+
+        //Debug.Log(bestNodeIndex);
         tempGoalState = closedList[bestNodeIndex].state; // debug purpose
 
         bestNodeIndex = closedList[bestNodeIndex].rootIndex;
 
         Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
 
+        if (closedList.Count == 0) return VehicleAction.NO_INPUT;
+
+        //Debug.Log("CloseList Taille = " + closedList.Count + " , bestNodeIndex = " + bestNodeIndex);
 
         return closedList[bestNodeIndex].state.AI.action;
     }
@@ -154,23 +179,25 @@ public class ForecastEngine : MonoBehaviour
         }
         return prioritaryIndex;
     }
+
     private int GetFinalPrioritaryIndex()
     {
         float minValue = 999999f;
         int prioritaryIndex = 0;
 
-        float currentValue;
+
+        float currentValue = 0;
 
         for (int i = 0; i < closedList.Count; i++)
         {
             currentValue = closedList[i].heuristicValue;
             if (currentValue < minValue)
             {
+                
                 minValue = currentValue;
                 prioritaryIndex = i;
             }
         }
-
         return prioritaryIndex;
     }
 
@@ -178,7 +205,7 @@ public class ForecastEngine : MonoBehaviour
     {
         /* POUR MONTRER AU PROF (1) */
         float groundFactor = 1f;
-        if (GameStateManager.isEntityInGrass(start.AI.position) == GroundType.Grass)
+        if(start.AI.ground == GroundType.Grass)
         { groundFactor = 2f; }
         return groundFactor * Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
         
@@ -188,6 +215,7 @@ public class ForecastEngine : MonoBehaviour
 
     private void GenerateChildren(ref Node node)
     {
+        //Debug.Log("root" + node.rootIndex);
         for (int i = 0; i < validActions.Length; i++)
         {
             VehicleAction action = validActions[i];
@@ -211,6 +239,8 @@ public class ForecastEngine : MonoBehaviour
             else
             {
                 childrenList[i].rootIndex = node.rootIndex;
+                //Debug.Log("child index : " + node.rootIndex);
+
             }
             childrenList[i].heuristicValue = GetHeuristicValue(ref childrenList[i].state, ref goalState);
 

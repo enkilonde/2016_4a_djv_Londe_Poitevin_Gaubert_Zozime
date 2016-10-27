@@ -77,6 +77,10 @@ public class GameStateManager : MonoBehaviour
 
         ApplyPhysics(player);
         //ApplyPhysics(AI);
+
+        //Debug.Log(gameState.player.ground);
+        //gameState.AI.position = Vector3.zero + new Vector3(1, 1, 1);
+
     }
 
     void UpdateGameState()
@@ -175,10 +179,9 @@ public class GameStateManager : MonoBehaviour
     static public GroundType isEntityInGrass(Vector3 entityPos)
     {
         Transform tile = GetEntityTile(entityPos);
-
         if (tile == null)
         {
-            return GroundType.Grass;
+            return GroundType.Wall;
         }
 
         Vector2 relativePos = GetPosInTile(entityPos, tile.position);
@@ -198,6 +201,8 @@ public class GameStateManager : MonoBehaviour
                 return GroundType.Road;
         }
     }
+
+    
 
     bool isEntityOnCheckpoint(Vector3 entityPos)
     {
@@ -222,17 +227,7 @@ public class GameStateManager : MonoBehaviour
 
     static Transform GetEntityTile(Vector3 entityPos)
     {
-
-
-        int x = (int)entityPos.x / 10;
-        int y = (int)entityPos.z / 10;
-
-        // Out of level bounds
-        if (x < 0 || x > LevelManager.levelWidth - 1 || y < 0 || y > LevelManager.levelHeight - 1)
-        {
-            return null;
-        }
-
+        
 
         // We get our game object
         GameObject go = LevelManager.GetTileAt((int)entityPos.x / 10, (int)entityPos.z / 10);
@@ -270,23 +265,13 @@ public class GameStateManager : MonoBehaviour
     {
         float rotationY = tile.rotation.eulerAngles.y;
 
-        if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
-        {
-            if (relativpos.y > 4.5f || relativpos.y < -4.5f) return GroundType.Wall;
-        }
-        else
-        {
-            if (relativpos.x > 4.5f || relativpos.x < -4.5f) return GroundType.Wall;
-        }
 
-        if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
-        {
-            if (relativpos.y > 2.5f || relativpos.y < -2.5f) return GroundType.Grass;
-        }
-        else
-        {
-            if (relativpos.x > 2.5f || relativpos.x < -2.5f) return GroundType.Grass;
-        }
+        if ((Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1) && (relativpos.y > 4.5f || relativpos.y < -4.5f)) return GroundType.Wall;
+        else if (!(Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1) && (relativpos.x > 4.5f || relativpos.x < -4.5f)) return GroundType.Wall;
+
+
+        if ((Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1) && (relativpos.y > 2.5f || relativpos.y < -2.5f)) return GroundType.Grass;
+        else if (!(Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1) && (relativpos.x > 2.5f || relativpos.x < -2.5f)) return GroundType.Grass;
 
         return GroundType.Road;
     }
@@ -296,10 +281,12 @@ public class GameStateManager : MonoBehaviour
         Vector3 pivot = tile.GetChild(0).position;
         float dist = (playerpos.x - pivot.x) * (playerpos.x - pivot.x) + (playerpos.z - pivot.z) * (playerpos.z - pivot.z);
 
+
         if (dist < 0.5f * 0.5f || dist > 9.5f * 9.5f) return GroundType.Wall;
 
 
         if (dist < 2.5f * 2.5f || dist > 7.5f * 7.5f) return GroundType.Grass;
+
         return GroundType.Road;
     }
 
@@ -307,23 +294,13 @@ public class GameStateManager : MonoBehaviour
     {
         float rotationY = tile.rotation.eulerAngles.y;
 
-        if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
-        {
-            if (relativpos.y > 4.5f || relativpos.y < -4.5f) return GroundType.Wall;
-        }
-        else
-        {
-            if (relativpos.x > 4.5f || relativpos.x < -4.5f) return GroundType.Wall;
-        }
 
-        if (Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1)
-        {
-            if (relativpos.y > 2.5f || relativpos.y < -2.5f) return GroundType.Grass;
-        }
-        else
-        {
-            if (relativpos.x > 2.5f || relativpos.x < -2.5f) return GroundType.Grass;
-        }
+        if ((Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1) && (relativpos.y > 4.5f || relativpos.y < -4.5f)) return GroundType.Wall;
+        else if (!(Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1) &&(relativpos.x > 4.5f || relativpos.x < -4.5f)) return GroundType.Wall;
+
+
+        if ((Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1) && (relativpos.y > 2.5f || relativpos.y < -2.5f)) return GroundType.Grass;
+        else if(!(Mathf.Abs(rotationY - 90) < 1 || Mathf.Abs(rotationY - 270) < 1) && (relativpos.x > 2.5f || relativpos.x < -2.5f)) return GroundType.Grass;
 
         return GroundType.Road;
     }
