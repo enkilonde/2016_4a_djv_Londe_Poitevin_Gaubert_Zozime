@@ -360,6 +360,31 @@ Prefab:
       propertyPath: m_TagString
       value: player
       objectReference: {fileID: 0}
+    - target: {fileID: 212000013183918188, guid: 6c9f8fd257e9eb6449f9e5c48816a326,
+        type: 2}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212000013183918188, guid: 6c9f8fd257e9eb6449f9e5c48816a326,
+        type: 2}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 212000013183918188, guid: 6c9f8fd257e9eb6449f9e5c48816a326,
+        type: 2}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 23000012980581026, guid: 6c9f8fd257e9eb6449f9e5c48816a326,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5c08bdec7d34ea74e8e4bf0835dedd26, type: 2}
+    - target: {fileID: 23000010630631670, guid: 6c9f8fd257e9eb6449f9e5c48816a326,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5c08bdec7d34ea74e8e4bf0835dedd26, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6c9f8fd257e9eb6449f9e5c48816a326, type: 2}
   m_IsPrefabParent: 0
@@ -1339,6 +1364,16 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 23000012980581026, guid: 6c9f8fd257e9eb6449f9e5c48816a326,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b03da4e154e83f748a12ee408944c069, type: 2}
+    - target: {fileID: 23000010630631670, guid: 6c9f8fd257e9eb6449f9e5c48816a326,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b03da4e154e83f748a12ee408944c069, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6c9f8fd257e9eb6449f9e5c48816a326, type: 2}
   m_IsPrefabParent: 0
