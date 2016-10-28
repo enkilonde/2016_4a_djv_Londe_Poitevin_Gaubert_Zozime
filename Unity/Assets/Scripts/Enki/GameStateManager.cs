@@ -11,10 +11,13 @@ public class GameStateManager : MonoBehaviour
     public Transform AI;
     public Transform speedIndicator;
 
-    public Transform destination;
+    Vector3 destination;
 
     //Private refs
     LevelManager levelManagerScript;
+    Vector3[] myWaypoints;
+    int currentPositionInLevel;
+
     PauseManager pauseManagerScript;
     ForecastEngine forecastEngine;
     Transform[] allWalls;
@@ -56,9 +59,19 @@ public class GameStateManager : MonoBehaviour
 
         InitGameState();
 
+        myWaypoints = new Vector3[levelManagerScript.checkpoints.Length * levelManagerScript.trackLapsCount];
+        for (int i = 0; i < levelManagerScript.trackLapsCount; i++)
+        {
+            for (int j = 0; j < levelManagerScript.checkpoints.Length; j++)
+            {
+                myWaypoints[i * levelManagerScript.checkpoints.Length + j] = levelManagerScript.checkpoints[j].position;
+            }
+        }
 
+        currentPositionInLevel = 0;
+        destination = myWaypoints[0];
         GameState goalState = new GameState();
-        goalState.AI.position = destination.position;
+        goalState.AI.position = destination;
         forecastEngine.SetGoalState(goalState);
     }
 
@@ -81,6 +94,21 @@ public class GameStateManager : MonoBehaviour
         //Debug.Log(gameState.player.ground);
         //gameState.AI.position = Vector3.zero + new Vector3(1, 1, 1);
 
+
+        // actualize destination
+        UpdateDestination();
+        GameState goalState = new GameState();
+        goalState.AI.position = destination;
+        forecastEngine.SetGoalState(goalState);
+    }
+
+    void UpdateDestination ()
+    {
+        if (Vector3.SqrMagnitude(gameState.AI.position - myWaypoints[currentPositionInLevel]) < 100f)
+        {
+            currentPositionInLevel++;
+            destination = myWaypoints[currentPositionInLevel];
+        }
     }
 
     void UpdateGameState()
