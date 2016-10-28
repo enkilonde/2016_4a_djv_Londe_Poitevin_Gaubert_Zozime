@@ -207,7 +207,7 @@ public class ForecastEngine : MonoBehaviour
         float groundFactor = 1f;
         if(start.AI.ground == GroundType.Grass)
         { groundFactor = 2f; }
-        return groundFactor * Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
+        return groundFactor * Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed) * 0.5f;
         
 
         //return Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
