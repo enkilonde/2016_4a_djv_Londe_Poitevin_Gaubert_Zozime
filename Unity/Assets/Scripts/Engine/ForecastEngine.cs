@@ -14,6 +14,8 @@ public class ForecastEngine : MonoBehaviour
         public float GetCurrentValue(float fixedTime)
         {
             return (cost * cost * fixedTime * fixedTime) + heuristicValue;
+            //return (cost * fixedTime);
+
         }
 
     }
@@ -109,11 +111,8 @@ public class ForecastEngine : MonoBehaviour
             GenerateChildren(ref currentNode);
             AddChildrenToOpenList();
 
-            //Debug.Log("current node rootidx" + currentNode.rootIndex);
-
             if (currentNode.rootIndex != -1)
             {
-                //Debug.Log("Added in closelist");
                 closedList.Add(currentNode);
             }
             else
@@ -126,26 +125,24 @@ public class ForecastEngine : MonoBehaviour
                     openList.RemoveAt(currentNodeIndex);
 
                     GenerateChildren(ref currentNode);
+                    closedList.Add(currentNode);
+
                     AddChildrenToOpenList();
 
-                    closedList.Add(currentNode);
                 }
             }
         }
 
-        //int bestNodeIndex = GetPrioritaryIndex(closedList);
         int bestNodeIndex = GetFinalPrioritaryIndex();
 
-        //Debug.Log(bestNodeIndex);
         tempGoalState = closedList[bestNodeIndex].state; // debug purpose
 
         bestNodeIndex = closedList[bestNodeIndex].rootIndex;
 
-        Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
 
         if (closedList.Count == 0) return VehicleAction.NO_INPUT;
 
-        //Debug.Log("CloseList Taille = " + closedList.Count + " , bestNodeIndex = " + bestNodeIndex);
+        //Debug.Log(closedList[bestNodeIndex].state.AI.action);
 
         return closedList[bestNodeIndex].state.AI.action;
     }
@@ -153,9 +150,24 @@ public class ForecastEngine : MonoBehaviour
     private void AddChildrenToOpenList()
     {
         int _l = childrenList.Length;
+        
         for (int i = 0; i < _l; i++)
         {
-            if (childrenList[i].state.AI.ground != GroundType.Wall) openList.Add(childrenList[i]);
+            if (childrenList[i].state.AI.ground != GroundType.Wall)
+            {
+                openList.Add(childrenList[i]);
+                continue;
+            }
+
+            for (int j = 0; j < openList.Count; j++)
+            {
+                if(openList[j].cost < childrenList[i].cost && VehicleStaticProperties.DiffBetweenVehicleProperties(openList[j].state.AI, childrenList[i].state.AI) < 1f)
+                {
+                    goto mycontinue;
+                }
+            }
+
+        mycontinue: { };
         }
     }
 
@@ -166,6 +178,7 @@ public class ForecastEngine : MonoBehaviour
         float fixedTime = Time.fixedDeltaTime;
 
         Node[] nodesList = list.ToArray();
+
         int listLenght = nodesList.Length;
 
         for (int i = 0; i < listLenght; i++)
@@ -177,11 +190,14 @@ public class ForecastEngine : MonoBehaviour
                 prioritaryIndex = i;
             }
         }
+        //Debug.LogError(list[prioritaryIndex].cost);
         return prioritaryIndex;
     }
 
     private int GetFinalPrioritaryIndex()
     {
+        closedList.AddRange(openList);
+        
         float minValue = 999999f;
         int prioritaryIndex = 0;
 
@@ -198,6 +214,8 @@ public class ForecastEngine : MonoBehaviour
                 prioritaryIndex = i;
             }
         }
+
+
         return prioritaryIndex;
     }
 
@@ -207,7 +225,11 @@ public class ForecastEngine : MonoBehaviour
         float groundFactor = 1f;
         if(start.AI.ground == GroundType.Grass)
         { groundFactor = 2f; }
-        return groundFactor * Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
+
+        if (start.AI.ground == GroundType.Grass)
+        { groundFactor = 100f; }
+
+        return groundFactor * Vector3.Magnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed) * 0.5f;
         
 
         //return Vector3.SqrMagnitude(goal.AI.position - start.AI.position) / (VehicleStaticProperties.maxSpeed * VehicleStaticProperties.maxSpeed);
@@ -215,23 +237,22 @@ public class ForecastEngine : MonoBehaviour
 
     private void GenerateChildren(ref Node node)
     {
-        //Debug.Log("root" + node.rootIndex);
         for (int i = 0; i < validActions.Length; i++)
         {
             VehicleAction action = validActions[i];
 
-            /*if (isOppositeAction(action, node.state.AI.action))
+            if (isOppositeAction(action, node.state.AI.action))
             {
                 continue;
-            }*/
+            }
 
             /* POUR MONTRER AU PROF 2 */
-            childrenList[i].cost = node.cost + i;
+            
             childrenList[i].state = gameStateManager.ComputeGameState(node.state, action, framesPerIteration);
-
+            childrenList[i].cost = childrenList[i].state.AI.ground == GroundType.Wall ?  int.MaxValue:node.cost + 1;
             /*childrenList[i].cost = node.cost + 1;
             childrenList[i].state = gameStateManager.ComputeGameState(node.state, action);*/
-            
+
             if (node.rootIndex == -1)
             {
                 childrenList[i].rootIndex = i;

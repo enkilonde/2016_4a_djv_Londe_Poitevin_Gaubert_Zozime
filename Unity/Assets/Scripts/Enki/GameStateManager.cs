@@ -12,11 +12,13 @@ public class GameStateManager : MonoBehaviour
     public Transform speedIndicator;
 
     public Transform destination;
+    int pathIndex = 6;
 
     //Private refs
     LevelManager levelManagerScript;
     PauseManager pauseManagerScript;
     ForecastEngine forecastEngine;
+    GetIdealPath getIdealPathScript;
     Transform[] allWalls;
 
     //internal
@@ -43,6 +45,7 @@ public class GameStateManager : MonoBehaviour
         levelManagerScript = GetComponent<LevelManager>();
         pauseManagerScript = GetComponent<PauseManager>();
         forecastEngine = GetComponent<ForecastEngine>();
+        getIdealPathScript = GetComponent<GetIdealPath>();
     }
 
     void Start()
@@ -80,7 +83,17 @@ public class GameStateManager : MonoBehaviour
 
         //Debug.Log(gameState.player.ground);
         //gameState.AI.position = Vector3.zero + new Vector3(1, 1, 1);
+        SetAIDestination();
+    }
 
+    void SetAIDestination()
+    {
+        //if (Input.GetKeyDown(KeyCode.A)) pathIndex++;
+        //destination.position = getIdealPathScript.pathPoints[pathIndex];
+
+        GameState goalState = new GameState();
+        goalState.AI.position = destination.position;
+        forecastEngine.SetGoalState(goalState);
     }
 
     void UpdateGameState()

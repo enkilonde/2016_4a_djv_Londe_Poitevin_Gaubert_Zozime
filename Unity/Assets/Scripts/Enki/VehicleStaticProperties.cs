@@ -134,7 +134,8 @@ public class VehicleStaticProperties
 
     public static float DiffBetweenVehicleProperties(VehicleProperties prop1, VehicleProperties prop2)
     {
+        return (Vector3.Distance(prop1.position, prop2.position));
 
-        return (Vector3.Distance(prop1.position, prop2.position) * Mathf.Abs(prop2.orientation - prop1.orientation) * Mathf.Abs(prop1.speedAcceleration - prop2.speedAcceleration));
+        //return (Vector3.Distance(prop1.position, prop2.position) * Mathf.Abs(prop2.orientation - prop1.orientation) * Mathf.Abs(prop1.speedAcceleration - prop2.speedAcceleration));
     }
 }
