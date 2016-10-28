@@ -6689,9 +6689,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f60b1e4f416e2194fa96a6c5f0210e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathPoints: []
-  IAtransform: {fileID: 466020632}
-  laps: 1
 --- !u!114 &1951380308
 MonoBehaviour:
   m_ObjectHideFlags: 0

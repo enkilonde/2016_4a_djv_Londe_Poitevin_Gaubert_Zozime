@@ -16,33 +16,25 @@ public class GetIdealPath : MonoBehaviour
         }
     }
 
-    public List<Vector3> pathPoints = new List<Vector3>();
+    List<Vector3> pathPoints = new List<Vector3>();
 
     LevelManager levelManager;
-    public Transform IAtransform;
-    public int laps;
+    Transform IAtransform;
 
     void Start()
     {
         levelManager = GetComponent<LevelManager>();
+        IAtransform = GameObject.Find("IA").transform;
+
         pathPoints = CalculatePath(IAtransform.position, levelManager.checkpoints);
     }
 
     List<Vector3> CalculatePath(Vector3 startPosition, Transform[] checkPoints)
     {
         List<Vector3> idealLap = new List<Vector3>(10 * checkPoints.Length);
-        List<Vector3> idealPath = new List<Vector3>(10 * checkPoints.Length * laps);
+        List<Vector3> idealPath = new List<Vector3>(10 * checkPoints.Length * levelManager.trackLapsCount);
         
-        //Debug.Log("Compute start to 0"); // OK
-        idealPath.AddRange(CalculatePathBetween2Position(startPosition, checkPoints[0].position));
-        //Debug.Log("Compute 0 to 1"); // OK
-        idealPath.AddRange(CalculatePathBetween2Position(checkPoints[0].position, checkPoints[1].position));
-        //Debug.Log("Compute 1 to 2"); // OK
-        idealPath.AddRange(CalculatePathBetween2Position(checkPoints[1].position, checkPoints[2].position));
-        //Debug.Log("Compute 2 to finish"); // OK
-        idealPath.AddRange(CalculatePathBetween2Position(checkPoints[2].position, checkPoints[3].position));
-
-        /*idealPath.AddRange(CalculatePathBetween2Position(startPosition, checkPoints[0].position)); // start to first CP
+        idealPath.AddRange(CalculatePathBetween2Position(startPosition, checkPoints[0].position)); // start to first CP
         
         for (int i = 1; i < checkPoints.Length; i++)
         {
@@ -51,12 +43,14 @@ public class GetIdealPath : MonoBehaviour
         
         idealPath.AddRange(idealLap); // start to 1 lap
 
-        for (int i = 1; i < laps; i++)
+        for (int i = 1; i < levelManager.trackLapsCount; i++)
         {
             idealPath.AddRange(CalculatePathBetween2Position(checkPoints[checkPoints.Length-1].position, checkPoints[0].position)); // start to 1 lap & 1 CP
             idealPath.AddRange(idealLap); // start to N lap
         }
-        */
+
+        idealPath.Add(checkPoints[checkPoints.Length - 1].position);
+
         return idealPath;
     }
 
