@@ -141,7 +141,7 @@ public class ForecastEngine : MonoBehaviour
 
         bestNodeIndex = closedList[bestNodeIndex].rootIndex;
 
-        Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
+        //Debug.Log(closedList[bestNodeIndex].state.AI.action); // Debug action
 
         if (closedList.Count == 0) return VehicleAction.NO_INPUT;
 

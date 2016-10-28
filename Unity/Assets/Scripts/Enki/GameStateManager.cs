@@ -104,10 +104,13 @@ public class GameStateManager : MonoBehaviour
 
     void UpdateDestination ()
     {
-        if (Vector3.SqrMagnitude(gameState.AI.position - myWaypoints[currentPositionInLevel]) < 100f)
+        if (currentPositionInLevel + 1 < myWaypoints.Length)
         {
-            currentPositionInLevel++;
-            destination = myWaypoints[currentPositionInLevel];
+            if (Vector3.SqrMagnitude(gameState.AI.position - myWaypoints[currentPositionInLevel]) < 100f)
+            {
+                currentPositionInLevel++;
+                destination = myWaypoints[currentPositionInLevel];
+            }
         }
     }
 
@@ -168,7 +171,7 @@ public class GameStateManager : MonoBehaviour
 
         if (isEntityOnCheckpoint(gameState.AI.position))
         {
-            levelManagerScript.PassCheckpoint(GetEntityTile(gameState.AI.position));
+            levelManagerScript.PassCheckpoint(GetEntityTile(gameState.AI.position), true);
         }
     }
 

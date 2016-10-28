@@ -108,7 +108,7 @@ public class LevelManager : MonoBehaviour
             RankingCanvas.GetChild(0).gameObject.SetActive(true);
             RankingCanvas.GetChild(1).gameObject.SetActive(false);
         }
-        else if (playerLapsCount < AICheckpointCount)
+        else if (playerCheckpointCount < AICheckpointCount)
         {
             RankingCanvas.GetChild(0).gameObject.SetActive(false);
             RankingCanvas.GetChild(1).gameObject.SetActive(true);
