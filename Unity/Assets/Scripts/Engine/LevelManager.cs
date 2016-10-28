@@ -6,8 +6,8 @@ public class LevelManager : MonoBehaviour
     /**
         Structure de la piste
     **/
-    public static int levelWidth = 500;
-    public static int levelHeight = 500;
+    public static int levelWidth = 20;
+    public static int levelHeight = 20;
     static private GameObject[] tiles;
 
 
