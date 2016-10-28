@@ -9,17 +9,17 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1000012317144586}
+  m_RootGameObject: {fileID: 1000013908851070}
   m_IsPrefabParent: 1
---- !u!1 &1000012317144586
+--- !u!1 &1000013908851070
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 4000013394172818}
-  - 108: {fileID: 108000011787262698}
+  - 4: {fileID: 4000014253702594}
+  - 108: {fileID: 108000014097131280}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -27,12 +27,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4000013394172818
+--- !u!4 &4000014253702594
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000012317144586}
+  m_GameObject: {fileID: 1000013908851070}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -40,12 +40,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!108 &108000011787262698
+--- !u!108 &108000014097131280
 Light:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000012317144586}
+  m_GameObject: {fileID: 1000013908851070}
   m_Enabled: 1
   serializedVersion: 7
   m_Type: 1

@@ -9,17 +9,17 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1000011582864620}
+  m_RootGameObject: {fileID: 1000010824528674}
   m_IsPrefabParent: 1
---- !u!1 &1000011582864620
+--- !u!1 &1000010824528674
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 4000013002002704}
-  - 20: {fileID: 20000013518342562}
+  - 4: {fileID: 4000012707661930}
+  - 20: {fileID: 20000010475312444}
   m_Layer: 0
   m_Name: Camera minimap
   m_TagString: Untagged
@@ -27,12 +27,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4000013002002704
+--- !u!4 &4000012707661930
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011582864620}
+  m_GameObject: {fileID: 1000010824528674}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 47.600006, y: 100, z: 34.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -40,12 +40,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!20 &20000013518342562
+--- !u!20 &20000010475312444
 Camera:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011582864620}
+  m_GameObject: {fileID: 1000010824528674}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 3
